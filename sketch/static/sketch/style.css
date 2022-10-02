@@ -1,0 +1,220 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126 
+   License: none (public domain) 
+*/ 
+html, body, div, span, applet, object, iframe, 
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, 
+a, abbr, acronym, address, big, cite, code, 
+del, dfn, em, img, ins, kbd, q, s, samp, 
+small, strike, strong, sub, sup, tt, var, 
+b, u, i, center, 
+dl, dt, dd, ol, ul, li, 
+fieldset, form, label, legend, 
+table, caption, tbody, tfoot, thead, tr, th, td, 
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary, 
+time, mark, audio, video { 
+        margin: 0; 
+        padding: 0; 
+        border: 0; 
+        font-size: 100%; 
+        font: inherit; 
+        vertical-align: baseline;
+} 
+/* HTML5 display-role reset for older browsers */ 
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+        display: block;
+} 
+body {
+        line-height: 1;
+} 
+ol, ul {
+        list-style: none;
+} 
+blockquote, q {
+        quotes: none; 
+} 
+blockquote:before, blockquote:after,
+q:before, q:after {
+        content: ‘’; 
+        content: none; 
+} 
+table { 
+        border-collapse: collapse; 
+        border-spacing: 0; 
+}
+
+
+
+* {
+ margin: 0;
+ padding: 0;
+ box-sizing: border-box;
+
+}
+
+.navbar {
+    /* background-image: url('../page_background_ori.png'); */
+    background-color: rgb(119, 167, 255);
+    height: 30px;
+}
+
+body {
+    /* background-image: url('../page_background.png'); */
+    /* background-repeat: no-repeat;     */
+    background-color: #e2f3fc;
+}
+
+#sketchingBoard, #pageCanvas, #generatingBoard {
+    /* border: 2px solid salmon; */
+    background-color: white;
+    border: 3px solid rgb(94, 145, 249);
+    border-radius: 5px;
+    margin: 5px;
+}
+
+
+#options {
+    position: relative;
+    margin: 5px;
+}
+
+.horizental, .bottom, .page, .story_save {
+    background-color: #caf2ff;
+    margin-top: 2px;
+    border: 5px solid skyblue;
+    border-radius: 20px;
+    padding: 5px;
+}
+
+.button {
+    position: relative;
+    size: 20px;
+    margin: 5px;
+}
+
+.btnColors, #btnEraser{
+    width: 20px;
+    height: 20px;
+    border: solid 0.5px black;
+}
+
+.left, .right{
+    float: left;
+    padding: 20px;
+}
+
+
+.clearfix {
+    clear: both;
+}
+
+.palette{
+    /* background-color: rgb(162, 229, 255); */
+    background-color: white;
+    border: 3px solid rgb(94, 145, 249);
+    border-radius: 5px;
+    padding: 3px;
+    margin: 5px;
+}
+
+.pairs {
+    float:left;
+    width: 20px;
+}
+
+/* .inputArea {
+    width: 100%;
+    background-color: aquamarine;
+} */
+
+#textInput {
+    width:70%;
+    background-color: white;
+    border: 3px solid rgb(94, 145, 249);
+    border-radius: 5px;
+}
+
+#textInput, .txtAreaBtn{
+    float: left;
+    margin: 5px;
+    /* padding: 20px; */
+}
+
+#curContent, .curContent {
+    height: 50%;
+}
+
+#curContent{
+    /* background-color: white;
+    border: 2px solid green; */
+    background-color: white;
+    border: 3px solid rgb(94, 145, 249);
+    border-radius: 5px;
+    width: 80%;
+    height: 50px;
+    margin: 5px;
+}
+
+#storyResult{
+    /* background-color: white;
+    border: 2px solid cornflowerblue; */
+    background-color: white;
+    border: 3px solid rgb(94, 145, 249);
+    border-radius: 5px;
+    width: 80%;
+    height: 100px;
+    margin: 5px;
+}
+
+.chatArea{
+    float: left;
+    width: 50%;
+}
+.story{
+    float: left;
+    width: 50%;
+}
+
+.wrap {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+.flexContainer {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: stretch;
+	align-content: stretch;
+}
+
+.books {
+    padding: 20px; 
+    width: 350px; 
+    height: 240px; 
+    margin: 10px;
+    text-align: center;
+    border: 3px solid rgb(94, 145, 249);
+    background-color: #caf2ff;
+    border-radius: 5px;
+}
+
+.coverCanvas {
+    border: 2px solid royalblue; 
+    width: 280px; 
+    height: 180px;
+    background-color: white;
+    margin: 10px;
+}
+
+#pageCanvas {
+    border: solid 2px royalblue;
+}
+
+.page {
+    text-align: center;
+}

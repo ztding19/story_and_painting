@@ -1,0 +1,28 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<div class="wrap">
+    HOME
+
+    <div class="flexContainer">
+        {% for book in books %}
+        <div class="books">
+            <h5>{{book.author}} —— <a href="/book/{{book.id}}">{{book.title}}</a></h5>
+            <canvas class="coverCanvas">{{book.sketch_strokes}}</canvas>
+        </div>
+
+        <!-- <hr> -->
+
+        {% endfor %}
+    </div>
+
+    <form action="http://127.0.0.1:8000/">
+        <input type="submit" value="新增">
+    </form>
+</div>
+
+{% load static %}
+<script src="{% static 'sketch/home_page.js' %}"></script>
+
+{% endblock content %}

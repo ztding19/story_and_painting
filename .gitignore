@@ -1,0 +1,7 @@
+
+*.pyc
+sketch/casual/__pycache__/sketchGenerate.cpython-38.pyc
+sketch/casual/__pycache__/strokeSave.cpython-38.pyc
+sketch/casual/__pycache__/urls.cpython-38.pyc
+sketch/casual/__pycache__/views.cpython-38.pyc
+sketch/sketch/__pycache__/settings.cpython-38.pyc

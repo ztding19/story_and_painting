@@ -1,0 +1,25 @@
+{% extends 'main.html'%}
+
+{% block content %}
+<div class="wrap">
+    <div class="page">   
+        <h1>{{book.title}}</h1>
+        <div>
+            <canvas id="pageCanvas"></canvas>
+        </div>
+        <div style="margin: 10px;">
+            <h3>現在頁數：1/1</h3>
+        </div>
+        <div style="margin: 10px;">
+            <button>上一頁</button>
+            <button>下一頁</button>    
+        </div>
+    </div>    
+</div>
+<p id="strStrokes" style="color: #caf2ff;">{{book.sketch_strokes}}</p>
+<p id="story" style="color: #caf2ff;">{{book.story}}</p>
+
+{% load static %}
+<script src="{% static 'sketch/book_page.js' %}"></script>
+
+{% endblock content %}
