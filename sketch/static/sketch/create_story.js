@@ -502,7 +502,7 @@ authorInput.addEventListener("input", function (e) {
 
 
 $("#btnSaveStory").click(function () {
-    if(curPageStrokes.length != 0 && wholeBookStrokes.length < curPage){
+    if(curPageStrokes.length != 0 && curPage == maxPage){
         wholeBookStrokes.push(curPageStrokes);
         wholeBookStrokesColors.push(curPageStrokesColors);
         wholeBookStory.push(curPageStory);
