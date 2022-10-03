@@ -11,10 +11,12 @@ coverCanvas[0].height = 180;
 coverCanvas[0].width = 280;
 drawCover(coverCanvas[0].getContext("2d"), coverCanvas[0].textContent);
 
+// currently, cover is the first page of the book with black color
 function drawCover(ctx, strokes)
 {
     strokes = JSON.parse(strokes);
-    console.log(strokes);
+    // console.log(strokes[0]);
+    strokes = strokes[0];
     for( let i=0; i < strokes.length; i++){
         liftPan = true;
         ctx.lineWidth = 1;

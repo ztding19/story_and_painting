@@ -1,12 +1,15 @@
 //Do the sketch part first
 let wholeBookStrokes = [];
+let wholeBookStrokesColors = [];
 let curPageStrokes = [];
+let curPageStrokesColors = [];
 let datasetName = "";
 let datasetNameSave = "";
 let AIstrokes = [];
 let AIstrokesCopy = [];
 let AIstrokesExist = false;
 let penColor = '#000000';
+
 const generatingCanvas = document.querySelector("#generatingBoard");
 const gctx = generatingCanvas.getContext("2d");
 
@@ -61,6 +64,7 @@ function initStroke() {
     painting = false;
     newStroke = false;
     curPageStrokes = [];
+    curPageStrokesColors = [];
     lastPanPositionX = 0;
     lastPanPositionY = 0;
 }
@@ -89,6 +93,7 @@ function finishedPosition() {
     ctx.beginPath();
     oneStroke[oneStroke.length - 1][2] = 1;
     curPageStrokes.push(oneStroke);
+    curPageStrokesColors.push(ctx.strokeStyle);
     oneStroke = [];
 }
 
@@ -124,6 +129,32 @@ buttonClear.addEventListener("click", function (e) {
     initStroke();
 });
 
+function drawOnCanvas(strokes, colors){
+    console.log(strokes)
+    console.log(colors)
+    for (let i = 0; i < strokes.length; i++) {
+        liftPan = false;
+        ctx.beginPath()
+        for (let j = 1; j < strokes[i].length; j++) {
+            if (liftPan) {
+                console.log('move')
+                ctx.moveTo(strokes[i][j][0], strokes[i][j][1]);
+                ctx.beginPath()
+                liftPan = false
+            }
+            else {
+                ctx.strokeStyle = colors[i];
+                ctx.lineTo(strokes[i][j][0], strokes[i][j][1]);
+                ctx.stroke()
+                if (strokes[i][j][2] == 1) {
+                    liftPan = true
+                }
+            }
+        }
+
+    }
+}
+
 const btnUndo = document.getElementById("btnUndo");
 btnUndo.addEventListener("click", function () {
     console.log("press undo")
@@ -136,30 +167,8 @@ btnUndo.addEventListener("click", function () {
     liftPan = false
     if (curPageStrokes.length > 0) {
         curPageStrokes.pop()
-
-        for (let i = 0; i < curPageStrokes.length; i++) {
-            console.log(curPageStrokes[i])
-            liftPan = false;
-            ctx.beginPath()
-            for (let j = 1; j < curPageStrokes[i].length; j++) {
-                if (liftPan) {
-                    console.log('move')
-
-                    ctx.moveTo(curPageStrokes[i][j][0], curPageStrokes[i][j][1]);
-                    ctx.beginPath()
-
-                    liftPan = false
-                }
-                else {
-                    ctx.lineTo(curPageStrokes[i][j][0], curPageStrokes[i][j][1]);
-                    ctx.stroke()
-                    if (curPageStrokes[i][j][2] == 1) {
-                        liftPan = true
-                    }
-                }
-            }
-
-        }
+        curPageStrokesColors.pop()
+        drawOnCanvas(curPageStrokes, curPageStrokesColors);
     }
 
 })
@@ -212,6 +221,7 @@ function copyAIStrokes(e) {
     }
     console.log(AIstrokesCopy)
     curPageStrokes.push(AIstrokesCopy);
+    curPageStrokesColors.push(penColor);
 }
 
 //Draw on the AI canvas
@@ -329,9 +339,9 @@ function drawAfterSubmitDataset() {
 }
 
 //From now on, it's word content area
-
-inputContent = ""
-story = ""
+let wholeBookStory = []
+let inputContent = ""
+let curPageStory = ""
 
 const textInput = document.getElementById('textInput')
 const curContent = document.getElementById('curContent')
@@ -345,14 +355,21 @@ function getInputContent(e) {
 
 //Save the current responced sentence
 btnConfirm.addEventListener("click", function () {
-    console.log("story = \n", story);
-    if (curContent.textContent != "" && !story.includes(curContent.textContent)) {
-        story += inputContent + curContent.textContent;
-        story += '<br>';
+    console.log("story = \n", curPageStory);
+    if (curContent.textContent != "" && !curPageStory.includes(curContent.textContent)) {
+        curPageStory += inputContent + curContent.textContent;
+        curPageStory += '<br>';
         console.log("new content");
     }
-
 })
+
+function initStory(){
+    curPageStory = [];
+}
+
+function showStory(story){
+    resultContent.innerHTML = story;
+}
 
 //Send the first sentence and show the responce
 $('.btnTxtSubmit').click(function () {
@@ -375,7 +392,7 @@ $('.btnTxtGet').click(function () {
         success: function (response) {
             console.log('success', response.generatingText)
             curContent.textContent = response.generatingText
-            resultContent.innerHTML = story + inputContent + response.generatingText
+            resultContent.innerHTML = curPageStory + inputContent + response.generatingText
         },
         error: function (error) {
             console.log('error', error)
@@ -391,7 +408,7 @@ function txtGet() {
         success: function (response) {
             console.log('success', response.generatingText)
             curContent.textContent = response.generatingText
-            resultContent.innerHTML = story + inputContent + response.generatingText
+            resultContent.innerHTML = curPageStory + inputContent + response.generatingText
         },
         error: function (error) {
             console.log('error', error)
@@ -399,6 +416,73 @@ function txtGet() {
 
     });
 };
+
+//page control area
+let curPage = 1;
+let maxPage = 1;
+
+const btnLastPage = document.getElementById('btnLastPage');
+const btnNextPage = document.getElementById('btnNextPage');
+btnLastPage.addEventListener('click', turnLastPage);
+function turnLastPage(){
+    if(curPage > 1){
+        curPage -= 1;
+        if(curPageStrokes.length==0){
+            maxPage-=1;
+        }
+        clearCurPageContent();
+        turnToThePage(curPage);
+    }
+    showCurPageInfo();
+}
+btnNextPage.addEventListener('click', turnNextPage);
+function turnNextPage(){
+    clearCurPageContent();
+    if(curPage == maxPage){
+        // add new page, store current page infomation
+        if(curPageStrokes.length > 0){
+            curPage += 1;
+            maxPage += 1;
+            wholeBookStrokes.push(curPageStrokes);
+            wholeBookStrokesColors.push(curPageStrokesColors);
+            wholeBookStory.push(curPageStory);
+            initStroke();
+            initStory();
+        }
+    }else{
+        curPage += 1;
+        turnToThePage(curPage);
+    }
+    showCurPageInfo();
+}
+
+function clearCurPageContent(){
+    ctx.clearRect(0, 0, sketchingCanvas.width, sketchingCanvas.height);
+    gctx.clearRect(0, 0, generatingCanvas.width, generatingCanvas.height);
+    textInput.textContent = ""
+    curContent.textContent = ""
+    resultContent.textContent = ""
+}
+
+function turnToThePage(page){
+    console.log(wholeBookStrokes)
+    console.log(wholeBookStrokesColors)
+    curPageStrokes = wholeBookStrokes[page-1]
+    curPageStrokesColors = wholeBookStrokesColors[page-1]
+    curPageStory = wholeBookStory[page-1]
+    drawOnCanvas(curPageStrokes, curPageStrokesColors)
+    showStory(curPageStory);
+}
+
+function showCurPageInfo(){
+    page_info = document.getElementById('page_info');
+    page_info.textContent = "現在頁數：" + curPage + "/" + maxPage;
+    if (curPage == maxPage){
+        btnNextPage.innerHTML = "新增頁面"
+    }else{
+        btnNextPage.innerHTML = "下一頁"
+    }
+}
 
 //Now, we're going to save the whole book
 title = ""
@@ -418,12 +502,18 @@ authorInput.addEventListener("input", function (e) {
 
 
 $("#btnSaveStory").click(function () {
-    strStrokes = JSON.stringify(curPageStrokes)
+    if(curPageStrokes.length != 0 && curPage == maxPage){
+        wholeBookStrokes.push(curPageStrokes);
+        wholeBookStrokesColors.push(curPageStrokesColors);
+        wholeBookStory.push(curPageStory);
+    }
+    strWholeBookStrokes = JSON.stringify(wholeBookStrokes);
+    strWholeBookStrokesColor = JSON.stringify(wholeBookStrokesColors);
+    strWholeBookStory = JSON.stringify(wholeBookStory);
     if (title != "") {
         console.log('in POST')
         console.log(curPageStrokes)
-        console.log(strStrokes)
-
+        console.log(strWholeBookStrokes)
         $.ajax({
             url: "/story-save/",
             type: "POST",
@@ -431,9 +521,9 @@ $("#btnSaveStory").click(function () {
                 'title': title,
                 'description': '',
                 'author': author,
-                'story': story,
-                'sketch_strokes': strStrokes,
-                'sketch_colors': '',
+                'story': strWholeBookStory,
+                'sketch_strokes': strWholeBookStrokes,
+                'sketch_colors': strWholeBookStrokesColor,
             }
         })
     }
