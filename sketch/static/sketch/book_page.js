@@ -18,9 +18,13 @@ let maxPage = wholeBookStrokes.length
 
 
 function showCurPage(){
+    pageInfo.textContent = "現在頁數" + curPage + "/" + maxPage
+    pctx.clearRect(0, 0, pageCanvas.width, pageCanvas.height);
     drawOnCanvas(wholeBookStrokes[curPage-1], wholeBookStrokesColors[curPage-1])
     fillTextOnCanvas(wholeBookStory[curPage-1])
 }
+
+const pageInfo = document.getElementById('pageInfo')
 
 function drawOnCanvas(strokes, colors){
     for(let i=0; i<strokes.length; i++){
@@ -77,3 +81,20 @@ function fillTextOnCanvas(story){
 }
 
 showCurPage();
+
+const btnLastPage = document.getElementById('btnLastPage');
+const btnNextPage = document.getElementById('btnNextPage');
+
+btnLastPage.addEventListener('click', function(){
+    if(curPage>1){
+        curPage -= 1;
+        showCurPage();
+    }
+})
+
+btnNextPage.addEventListener('click', function(){
+    if(curPage<maxPage){
+        curPage += 1;
+        showCurPage();
+    }
+})
