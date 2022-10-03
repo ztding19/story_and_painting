@@ -1,17 +1,17 @@
 const pageCanvas = document.getElementById('pageCanvas')
 const pctx = pageCanvas.getContext('2d')
 const strStrokes = document.getElementById('strStrokes')
+const strStrokesColors = document.getElementById('strStrokesColors')
 
 pageCanvas.height = 600
 pageCanvas.width = 700
 
 strokes = []
-
+strokesColors = []
 strokes = JSON.parse(strStrokes.textContent)
-// console.log(strokes)
-console.log(strokes.length)
-console.log(pctx.strokeStyle)
+strokesColors = JSON.parse(strStrokesColors.textContent)
 strStrokes.textContent = ""
+strStrokesColors.textContent = ""
 for(let i=0; i<strokes.length; i++){
     liftPan = true
     pctx.lineWidth = 2;
@@ -25,6 +25,7 @@ for(let i=0; i<strokes.length; i++){
             liftPan = false;
         }
         else{
+            pctx.strokeStyle = strokesColors[i];
             pctx.lineTo(strokes[i][j][0], strokes[i][j][1]);
             pctx.stroke();
             if(strokes[i][j][2] == 1){
