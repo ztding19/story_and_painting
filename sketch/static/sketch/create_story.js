@@ -498,12 +498,12 @@ authorInput.addEventListener("input", function (e) {
 
 
 $("#btnSaveStory").click(function () {
-    strStrokes = JSON.stringify(curPageStrokes);
+    strWholeBookStrokes = JSON.stringify(curPageStrokes);
     strStrokesColor = JSON.stringify(curPageStrokesColors);
     if (title != "") {
         console.log('in POST')
         console.log(curPageStrokes)
-        console.log(strStrokes)
+        console.log(strWholeBookStrokes)
 
         $.ajax({
             url: "/story-save/",
@@ -513,7 +513,7 @@ $("#btnSaveStory").click(function () {
                 'description': '',
                 'author': author,
                 'story': curPageStory,
-                'sketch_strokes': strStrokes,
+                'sketch_strokes': strWholeBookStrokes,
                 'sketch_colors': strStrokesColor,
             }
         })
