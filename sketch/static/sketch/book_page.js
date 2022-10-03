@@ -9,8 +9,9 @@ strokes = []
 
 strokes = JSON.parse(strStrokes.textContent)
 // console.log(strokes)
+console.log(strokes.length)
+console.log(pctx.strokeStyle)
 strStrokes.textContent = ""
-
 for(let i=0; i<strokes.length; i++){
     liftPan = true
     pctx.lineWidth = 2;

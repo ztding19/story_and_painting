@@ -1,12 +1,14 @@
 //Do the sketch part first
 let wholeBookStrokes = [];
 let curPageStrokes = [];
+let curPageStrokeColors = [];
 let datasetName = "";
 let datasetNameSave = "";
 let AIstrokes = [];
 let AIstrokesCopy = [];
 let AIstrokesExist = false;
 let penColor = '#000000';
+
 const generatingCanvas = document.querySelector("#generatingBoard");
 const gctx = generatingCanvas.getContext("2d");
 
@@ -89,6 +91,7 @@ function finishedPosition() {
     ctx.beginPath();
     oneStroke[oneStroke.length - 1][2] = 1;
     curPageStrokes.push(oneStroke);
+    curPageStrokeColors.push(ctx.strokeStyle);
     oneStroke = [];
 }
 
@@ -136,21 +139,19 @@ btnUndo.addEventListener("click", function () {
     liftPan = false
     if (curPageStrokes.length > 0) {
         curPageStrokes.pop()
-
+        curPageStrokeColors.pop()
         for (let i = 0; i < curPageStrokes.length; i++) {
-            console.log(curPageStrokes[i])
             liftPan = false;
             ctx.beginPath()
             for (let j = 1; j < curPageStrokes[i].length; j++) {
                 if (liftPan) {
                     console.log('move')
-
                     ctx.moveTo(curPageStrokes[i][j][0], curPageStrokes[i][j][1]);
                     ctx.beginPath()
-
                     liftPan = false
                 }
                 else {
+                    ctx.strokeStyle = curPageStrokeColors[i];
                     ctx.lineTo(curPageStrokes[i][j][0], curPageStrokes[i][j][1]);
                     ctx.stroke()
                     if (curPageStrokes[i][j][2] == 1) {
@@ -212,6 +213,7 @@ function copyAIStrokes(e) {
     }
     console.log(AIstrokesCopy)
     curPageStrokes.push(AIstrokesCopy);
+    curPageStrokeColors.push(penColor);
 }
 
 //Draw on the AI canvas
@@ -400,6 +402,28 @@ function txtGet() {
     });
 };
 
+//page control area
+let curPage = 1;
+let maxPage = 1;
+
+const btnLastPage = document.getElementById('btnLastPage');
+const btnNextPage = document.getElementById('btnNextPage');
+
+btnLastPage.addEventListener('click', turnLastPage);
+function turnLastPage(){
+    if(curPage > 1){
+        curPage -= 1;
+    }
+}
+btnNextPage.addEventListener('click', turnNextPage);
+function turnNextPage(){
+    curPage += 1;
+    if(curPage == maxPage){
+        maxPage += 1;
+    }else{
+    }
+}
+
 //Now, we're going to save the whole book
 title = ""
 author = ""
@@ -418,7 +442,8 @@ authorInput.addEventListener("input", function (e) {
 
 
 $("#btnSaveStory").click(function () {
-    strStrokes = JSON.stringify(curPageStrokes)
+    strStrokes = JSON.stringify(curPageStrokes);
+    strStrokesColor = JSON.stringify(curPageStrokeColors);
     if (title != "") {
         console.log('in POST')
         console.log(curPageStrokes)
@@ -433,7 +458,7 @@ $("#btnSaveStory").click(function () {
                 'author': author,
                 'story': story,
                 'sketch_strokes': strStrokes,
-                'sketch_colors': '',
+                'sketch_colors': strStrokesColor,
             }
         })
     }
