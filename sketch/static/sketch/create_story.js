@@ -440,13 +440,15 @@ function turnNextPage(){
     clearCurPageContent();
     if(curPage == maxPage){
         // add new page, store current page infomation
-        curPage += 1;
-        maxPage += 1;
-        wholeBookStrokes.push(curPageStrokes);
-        wholeBookStrokesColors.push(curPageStrokesColors);
-        wholeBookStory.push(curPageStory);
-        initStroke();
-        initStory();
+        if(curPageStrokes.length > 0){
+            curPage += 1;
+            maxPage += 1;
+            wholeBookStrokes.push(curPageStrokes);
+            wholeBookStrokesColors.push(curPageStrokesColors);
+            wholeBookStory.push(curPageStory);
+            initStroke();
+            initStory();
+        }
     }else{
         curPage += 1;
         turnToThePage(curPage);
@@ -463,6 +465,8 @@ function clearCurPageContent(){
 }
 
 function turnToThePage(page){
+    console.log(wholeBookStrokes)
+    console.log(wholeBookStrokesColors)
     curPageStrokes = wholeBookStrokes[page-1]
     curPageStrokesColors = wholeBookStrokesColors[page-1]
     curPageStory = wholeBookStory[page-1]
@@ -498,13 +502,18 @@ authorInput.addEventListener("input", function (e) {
 
 
 $("#btnSaveStory").click(function () {
-    strWholeBookStrokes = JSON.stringify(curPageStrokes);
-    strStrokesColor = JSON.stringify(curPageStrokesColors);
+    if(curPageStrokes.length != 0 && wholeBookStrokes.length < curPage){
+        wholeBookStrokes.push(curPageStrokes);
+        wholeBookStrokesColors.push(curPageStrokesColors);
+        wholeBookStory.push(curPageStory);
+    }
+    strWholeBookStrokes = JSON.stringify(wholeBookStrokes);
+    strWholeBookStrokesColor = JSON.stringify(wholeBookStrokesColors);
+    strWholeBookStory = JSON.stringify(wholeBookStory);
     if (title != "") {
         console.log('in POST')
         console.log(curPageStrokes)
         console.log(strWholeBookStrokes)
-
         $.ajax({
             url: "/story-save/",
             type: "POST",
@@ -512,9 +521,9 @@ $("#btnSaveStory").click(function () {
                 'title': title,
                 'description': '',
                 'author': author,
-                'story': curPageStory,
+                'story': strWholeBookStory,
                 'sketch_strokes': strWholeBookStrokes,
-                'sketch_colors': strStrokesColor,
+                'sketch_colors': strWholeBookStrokesColor,
             }
         })
     }
