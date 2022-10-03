@@ -5,74 +5,82 @@
     <div class="wrap">
         <div class="horizental">
             <div class="left">
-                <h1>AI畫布</h1>
-                <canvas id="generatingBoard"></canvas>
-                <div class="button">
-                    <button id="btnClear" class="btnClear">清除畫布</button>
-                    <button id="btnGet" class="btnGet">生成圖形</button>
-                    <!-- <button id="btnDraw" class="btnDraw">生成圖形</button> -->
+                <div class="canvas_left">
+                    <h1>AI畫布</h1>
+                    <canvas id="generatingBoard"></canvas>
+                    <div class="button">
+                        <button id="btnClear" class="btnClear">清除畫布</button>
+                        <button id="btnGet" class="btnGet">生成圖形</button>
+                        <!-- <button id="btnDraw" class="btnDraw">生成圖形</button> -->
+                    </div>
+                    <select name="" id="options">
+                        {% include 'casual/options.html'%}
+                    </select>
+                    <div class="palette">
+                        {% include 'casual/palette.html' %}
+                        <div class="clearfix"></div>
+                        <button class="btnColors", style="background-color: white;"></button>
+                        <button class="btnColors", style="background-color: black;"></button>
+                        <button id="btnUndo">復原</button>
+                    </div>
                 </div>
-                <select name="" id="options">
-                {% include 'casual/options.html'%}
-                </select>
-                <div class="palette">
-                    {% include 'casual/palette.html' %}
-                    <div class="clearfix"></div>
-                    <button class="btnColors", style="background-color: white;"></button>
-                    <button class="btnColors", style="background-color: black;"></button>
-                    <button id="btnUndo">復原</button>
-                </div>
-
             </div>
             <div class="right">
-                <h1>畫布</h1>
-                <canvas id="sketchingBoard"></canvas>
-                <div class="clearfix"></div>
-                <select name="" id="optionsSave">
-                    {% include 'casual/options.html'%}
-                </select>
-                <button id="btnSubmit" class="btnSubmit">儲存項目</button>
+                <div class="canvas_right">
+                    <h1>畫布</h1>
+                    <canvas id="sketchingBoard"></canvas>
+                    <div class="clearfix"></div>
+                    <select name="" id="optionsSave">
+                        {% include 'casual/options.html'%}
+                    </select>
+                    <button id="btnSubmit" class="btnSubmit">儲存項目</button>
+                </div>
             </div>
-            
             <div class="clearfix"></div>
         </div>
         <div class="bottom">
-            <div class="story">
-                <h1>故事內容</h1>
-                <p id="storyResult"></p>
-                <button id="btnTxtConfirm">確定句子</button>
-            </div>
-            <div class="chatArea">
-                <h1>輸入故事第一句</h1>
-                <div class="inputArea">
-                    <textarea name="textInput" id="textInput" cols="30" rows="5" placeholder="寫句話吧！"></textarea>
-                    <div class="txtAreaBtn" style="width: 60px;">
-                        <button id="btnTxtSubmit" class="btnTxtSubmit">生成句子</button>
-                        <!-- <button id="btnTxtGet" class="btnTxtGet">生成句子</button> -->
-
-                    </div>
-                    <div class="clearfix"></div>
+            <div class="left" style="width: 50%;">
+                <div class="story">
+                    <h1>故事內容</h1>
+                    <p id="storyResult"></p>
+                    <button id="btnTxtConfirm">確定句子</button>
                 </div>
-                <h1>生成結果</h1>
-                <p id="curContent"></p>
+            </div>
+            <div class="right" style="width: 50%;">
+                <div class="chatArea">
+                    <h1>輸入故事第一句</h1>
+                    <div class="inputArea">
+                        <textarea name="textInput" id="textInput" cols="30" rows="5" placeholder="寫句話吧！"></textarea>
+                        <div class="txtAreaBtn" style="width: 60px;">
+                            <button id="btnTxtSubmit" class="btnTxtSubmit">生成句子</button>
+                            <!-- <button id="btnTxtGet" class="btnTxtGet">生成句子</button> -->
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <h1>生成結果</h1>
+                    <p id="curContent"></p>
+                </div>
             </div>
             <div class="clearfix"></div>
         </div>
-
-        <div class="story_save">
-            <div class="left">
+        <div class="left" style="width: 50%;">
+            <div class="page_turn" style="height: 130px;">
+                <h1>現在頁數：1/1</h1>
+                <button id="btnLastPage">上一頁</button>
+                <button id="btnNextPage">新增頁面</button>
+            </div>
+        </div>
+        <div class="right" style="width: 50%; ">
+            <div class="story_save" style="height: 130px;">
                 <h1>故事標題</h1>
                 <textarea name="titleInput" id="titleInput" cols="30" rows="2" placeholder=""></textarea>
                 <h1>作者名稱</h1>
                 <textarea name="authorInput" id="authorInput" cols="30" rows="2" placeholder=""></textarea>
                 <button id="btnSaveStory">保存故事</button>
-
             </div>
-            <div class="clearfix"></div>
         </div>
-
+        <div class="clearfix"></div>
     </div>
-    
 </div>
 
 
