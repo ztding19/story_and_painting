@@ -1,11 +1,15 @@
 //Do the sketch part first
-let strokes = [];
+let wholeBookStrokes = [];
+let wholeBookStrokesColors = [];
+let curPageStrokes = [];
+let curPageStrokesColors = [];
 let datasetName = "";
 let datasetNameSave = "";
 let AIstrokes = [];
 let AIstrokesCopy = [];
 let AIstrokesExist = false;
 let penColor = '#000000';
+
 const generatingCanvas = document.querySelector("#generatingBoard");
 const gctx = generatingCanvas.getContext("2d");
 
@@ -14,13 +18,13 @@ const ctx = sketchingCanvas.getContext("2d");
 
 sketchingCanvas.height = 450
 sketchingCanvas.width = 700
-generatingCanvas.height = 250 
+generatingCanvas.height = 250
 generatingCanvas.width = 250
 
 canvasPosX = sketchingCanvas.offsetLeft;
 canvasPosY = sketchingCanvas.offsetTop;
 
-window.addEventListener("resize", ()=>{
+window.addEventListener("resize", () => {
     canvasPosX = sketchingCanvas.offsetLeft;
     canvasPosY = sketchingCanvas.offsetTop;
 });
@@ -30,7 +34,7 @@ window.addEventListener("resize", ()=>{
 let datasetOptions = document.getElementById("options");
 datasetOptions.onclick = changeDataset;
 
-function changeDataset(){
+function changeDataset() {
     console.log(this.value)
     datasetName = this.value
 }
@@ -39,7 +43,7 @@ function changeDataset(){
 let datasetOptionsSave = document.getElementById("optionsSave");
 datasetOptionsSave.onclick = changeDatasetSave;
 
-function changeDatasetSave(){
+function changeDatasetSave() {
     console.log(this.value)
     datasetNameSave = this.value
 }
@@ -56,17 +60,18 @@ let newStroke = false;
 let lastPanPositionX = 0
 let lastPanPositionY = 0
 let oneStroke = [];
-function initStroke(){
+function initStroke() {
     painting = false;
     newStroke = false;
-    strokes = [];
+    curPageStrokes = [];
+    curPageStrokesColors = [];
     lastPanPositionX = 0;
     lastPanPositionY = 0;
 }
 
-function startPosition(e){
-    if (e.button == 0){     //left button : draw on canvas
-        if (lastPanPositionX != 0 && lastPanPositionY != 0){
+function startPosition(e) {
+    if (e.button == 0) {     //left button : draw on canvas
+        if (lastPanPositionX != 0 && lastPanPositionY != 0) {
             newStroke = true;
             let innerStroke = [e.clientX - canvasPosX - lastPanPositionX, e.clientY - canvasPosY - lastPanPositionY, 0];
             oneStroke.push(innerStroke);
@@ -75,96 +80,100 @@ function startPosition(e){
         ctx.beginPath();
         draw(e);
     }
-    else if(e.button == 1){ //middle button : generate AI strokes
-        console.log('middle button')
+    else if (e.button == 1 || e.button == 2) { //middle button or right button : generate AI strokes
+        console.log('middle button or middle button')
         copyAIStrokes(e)
     }
-    
+
 }
 
-function finishedPosition(){
-    if (!painting)  return;
+function finishedPosition() {
+    if (!painting) return;
     painting = false;
     ctx.beginPath();
-    oneStroke[oneStroke.length-1][2] = 1;
-    strokes.push(oneStroke);
+    oneStroke[oneStroke.length - 1][2] = 1;
+    curPageStrokes.push(oneStroke);
+    curPageStrokesColors.push(ctx.strokeStyle);
     oneStroke = [];
 }
 
-function draw(e){
-    if(!painting) return;
+function draw(e) {
+    if (!painting) return;
     ctx.lineWidth = 2;
     ctx.lineCap = 'round';
     ctx.strokeStyle = penColor;
     //current paiting board position is (500,100)
-    ctx.lineTo(e.clientX-canvasPosX, e.clientY-canvasPosY);
+    ctx.lineTo(e.clientX - canvasPosX, e.clientY - canvasPosY);
     ctx.stroke();
 
-    if(newStroke) {
+    if (newStroke) {
         newStroke = false;
-        
         lastPanPositionX = e.clientX - canvasPosX;
         lastPanPositionY = e.clientY - canvasPosY;
         return;
     }
-    let innerStroke = [e.clientX - canvasPosX , e.clientY - canvasPosY, 0];
+    let innerStroke = [e.clientX - canvasPosX, e.clientY - canvasPosY, 0];
     oneStroke.push(innerStroke);
     lastPanPositionX = e.clientX - canvasPosX;
     lastPanPositionY = e.clientY - canvasPosY;
-}   
+}
 //EventListeners
 sketchingCanvas.addEventListener("mousedown", startPosition);
 sketchingCanvas.addEventListener("mouseup", finishedPosition);
 sketchingCanvas.addEventListener("mousemove", draw);
 
 const buttonClear = document.getElementById("btnClear");
-buttonClear.addEventListener("click", function(e){
-    console.log(strokes);
+buttonClear.addEventListener("click", function (e) {
+    console.log(curPageStrokes);
     ctx.clearRect(0, 0, sketchingCanvas.width, sketchingCanvas.height);
     initStroke();
 });
 
+function drawOnCanvas(strokes, colors){
+    console.log(strokes)
+    console.log(colors)
+    for (let i = 0; i < strokes.length; i++) {
+        liftPan = false;
+        ctx.beginPath()
+        for (let j = 1; j < strokes[i].length; j++) {
+            if (liftPan) {
+                console.log('move')
+                ctx.moveTo(strokes[i][j][0], strokes[i][j][1]);
+                ctx.beginPath()
+                liftPan = false
+            }
+            else {
+                ctx.strokeStyle = colors[i];
+                ctx.lineTo(strokes[i][j][0], strokes[i][j][1]);
+                ctx.stroke()
+                if (strokes[i][j][2] == 1) {
+                    liftPan = true
+                }
+            }
+        }
+
+    }
+}
+
 const btnUndo = document.getElementById("btnUndo");
-btnUndo.addEventListener("click", function(){
+btnUndo.addEventListener("click", function () {
     console.log("press undo")
-    console.log(strokes.length)
+    console.log(curPageStrokes.length)
     ctx.clearRect(0, 0, sketchingCanvas.width, sketchingCanvas.height);
     ctx.lineWidth = 2;
     ctx.lineCap = 'round';
     ctx.strokeStyle = penColor;
     ctx.beginPath();
     liftPan = false
-    if(strokes.length > 0){
-        strokes.pop()
-        
-        for(let i = 0; i < strokes.length; i++){
-            console.log(strokes[i])
-            liftPan = false;
-            ctx.beginPath()
-            for(let j = 1; j < strokes[i].length; j++){ 
-                if( liftPan ){
-                    console.log('move')
-                    
-                    ctx.moveTo(strokes[i][j][0] , strokes[i][j][1] );
-                    ctx.beginPath()
-                    
-                    liftPan = false
-                }
-                else{
-                    ctx.lineTo(strokes[i][j][0] , strokes[i][j][1] );
-                    ctx.stroke()
-                    if(strokes[i][j][2] == 1){
-                        liftPan = true
-                    }    
-                }
-            }
-            
-        }
+    if (curPageStrokes.length > 0) {
+        curPageStrokes.pop()
+        curPageStrokesColors.pop()
+        drawOnCanvas(curPageStrokes, curPageStrokesColors);
     }
-    
+
 })
 
-function copyAIStrokes(e){
+function copyAIStrokes(e) {
     console.log(AIstrokes)
     console.log(e.clientX, e.clientY)
     AIstrokesCopy = JSON.parse(JSON.stringify(AIstrokes))    //這是存對於畫布的絕對路徑的Array
@@ -177,47 +186,47 @@ function copyAIStrokes(e){
     i = 0;
     len = AIstrokes.length;
     liftPan = false;
-    function drawEachLine(){
-        if(i>=len){
+    function drawEachLine() {
+        if (i >= len) {
             clearInterval(slowlydraw);
             console.log("clearInterval")
             ctx.beginPath()
             return;
         }
-        
-        if(liftPan){
-            AIstrokesCopy[i][0] = curPanX + AIstrokesCopy[i][0]*10;
-            AIstrokesCopy[i][1] = curPanY + AIstrokesCopy[i][1]*10;
+
+        if (liftPan) {
+            AIstrokesCopy[i][0] = curPanX + AIstrokesCopy[i][0] * 10;
+            AIstrokesCopy[i][1] = curPanY + AIstrokesCopy[i][1] * 10;
             // ctx.moveTo(AIstrokes[i][0], AIstrokes[i][1]);
-            ctx.moveTo(curPanX + AIstrokes[i][0]*10, curPanY + AIstrokes[i][1]*10);
-            curPanX = curPanX + AIstrokes[i][0]*10;
-            curPanY = curPanY + AIstrokes[i][1]*10;
+            ctx.moveTo(curPanX + AIstrokes[i][0] * 10, curPanY + AIstrokes[i][1] * 10);
+            curPanX = curPanX + AIstrokes[i][0] * 10;
+            curPanY = curPanY + AIstrokes[i][1] * 10;
             // curPanX = AIstrokes[i][0]
             // curPanY = AIstrokes[i][1]
             liftPan = false
             console.log('lift')
-        }else{
-            AIstrokesCopy[i][0] = curPanX + AIstrokesCopy[i][0]*10;
-            AIstrokesCopy[i][1] = curPanY + AIstrokesCopy[i][1]*10;
+        } else {
+            AIstrokesCopy[i][0] = curPanX + AIstrokesCopy[i][0] * 10;
+            AIstrokesCopy[i][1] = curPanY + AIstrokesCopy[i][1] * 10;
             // ctx.lineTo(AIstrokes[i][0], AIstrokes[i][1])
-            ctx.lineTo(curPanX + AIstrokes[i][0]*10, curPanY + AIstrokes[i][1]*10);
+            ctx.lineTo(curPanX + AIstrokes[i][0] * 10, curPanY + AIstrokes[i][1] * 10);
             ctx.stroke()
             // curPanX = AIstrokes[i][0]
             // curPanY = AIstrokes[i][1]
-            curPanX = curPanX + AIstrokes[i][0]*10;
-            curPanY = curPanY + AIstrokes[i][1]*10;
-            if (AIstrokes[i][2] == 1)    liftPan = true
+            curPanX = curPanX + AIstrokes[i][0] * 10;
+            curPanY = curPanY + AIstrokes[i][1] * 10;
+            if (AIstrokes[i][2] == 1) liftPan = true
         }
-        i+=1;
+        i += 1;
     }
     console.log(AIstrokesCopy)
-    strokes.push(AIstrokesCopy);
+    curPageStrokes.push(AIstrokesCopy);
+    curPageStrokesColors.push(penColor);
 }
 
 //Draw on the AI canvas
-function generateSketch(response)
-{
-    gctx.clearRect(0,0, generatingCanvas.width, generatingCanvas.height);
+function generateSketch(response) {
+    gctx.clearRect(0, 0, generatingCanvas.width, generatingCanvas.height);
     AIstrokesExist = true;
     gcanvasPosX = generatingCanvas.offsetLeft;
     gcanvasPosY = generatingCanvas.offsetTop;
@@ -233,40 +242,40 @@ function generateSketch(response)
     liftPan = false;
 
     let slowlydraw = setInterval(drawEachLine, 10);
-    function drawEachLine(){
-        if(i>=len){
+    function drawEachLine() {
+        if (i >= len) {
             clearInterval(slowlydraw);
             console.log("clearInterval")
             return;
         }
-        
-        if(liftPan){
-            gctx.moveTo(gcanvasPosX + curPanX + response[i][0]*10, gcanvasPosY + curPanY + response[i][1]*10);
-            curPanX = curPanX + response[i][0]*10;
-            curPanY = curPanY + response[i][1]*10;
+
+        if (liftPan) {
+            gctx.moveTo(gcanvasPosX + curPanX + response[i][0] * 10, gcanvasPosY + curPanY + response[i][1] * 10);
+            curPanX = curPanX + response[i][0] * 10;
+            curPanY = curPanY + response[i][1] * 10;
             liftPan = false
             console.log('lift')
-        }else{
-            gctx.lineTo(gcanvasPosX + curPanX + response[i][0]*10, gcanvasPosY + curPanY + response[i][1]*10);
+        } else {
+            gctx.lineTo(gcanvasPosX + curPanX + response[i][0] * 10, gcanvasPosY + curPanY + response[i][1] * 10);
             gctx.stroke()
-            curPanX = curPanX + response[i][0]*10;
-            curPanY = curPanY + response[i][1]*10;
-            if (response[i][2] == 1)    liftPan = true
+            curPanX = curPanX + response[i][0] * 10;
+            curPanY = curPanY + response[i][1] * 10;
+            if (response[i][2] == 1) liftPan = true
         }
-        i+=1;
+        i += 1;
     }
 
 }
 
 
 //Save strokes to datasetNameSave
-$(document).ready(function(){
-    $(".btnSubmit").click(function(){
+$(document).ready(function () {
+    $(".btnSubmit").click(function () {
         $.ajax({
             urls: '',
             type: 'POST',
             data: {
-                'stroke_arr[]': strokes,
+                'stroke_arr[]': curPageStrokes,
                 'dataset_name': datasetNameSave
             },
         });
@@ -275,7 +284,7 @@ $(document).ready(function(){
 
 
 //Get AI strokes and draw from datasetName
-$(".btnGet").click(function(){
+$(".btnGet").click(function () {
     AIstrokes = [];
     $.ajax({
         url: "/getStroke/",
@@ -288,51 +297,51 @@ $(".btnGet").click(function(){
 });
 
 //Only draw, and it's useless now
-$('.btnDraw').click(function(){
+$('.btnDraw').click(function () {
     $.ajax({
         url: "/generating/",
         type: 'GET',
-        success: function(response){
+        success: function (response) {
             console.log('success', response.test)
             AIstrokes = response.test
             generateSketch(AIstrokes);
         },
-        error: function(error){
+        error: function (error) {
             console.log('error', error)
         }
     });
 });
 
-function drawAfterSubmitDataset(){
+function drawAfterSubmitDataset() {
     let tryDrawingInterval = setInterval(tryToDraw, 2000);
-    function tryToDraw(){
-        if(AIstrokes.length <= 0){
+    function tryToDraw() {
+        if (AIstrokes.length <= 0) {
             $.ajax({
                 url: "/generating/",
                 type: 'GET',
-                success: function(response){
+                success: function (response) {
                     console.log('success', response.test)
                     AIstrokes = response.test
-                    if(AIstrokes.length > 0){
+                    if (AIstrokes.length > 0) {
                         generateSketch(AIstrokes);
                     }
                 },
-                error: function(error){
+                error: function (error) {
                     console.log('error', error)
                 }
             });
-        }else{
+        } else {
             console.log('get Stroke');
             clearInterval(tryDrawingInterval);
         }
     }
-    
+
 }
 
 //From now on, it's word content area
-
-inputContent = ""
-story = ""
+let wholeBookStory = []
+let inputContent = ""
+let curPageStory = ""
 
 const textInput = document.getElementById('textInput')
 const curContent = document.getElementById('curContent')
@@ -340,23 +349,30 @@ const resultContent = document.getElementById('storyResult')
 const btnConfirm = document.getElementById('btnTxtConfirm')
 
 textInput.addEventListener("input", getInputContent)
-function getInputContent(e){
+function getInputContent(e) {
     inputContent = e.target.value
 }
 
 //Save the current responced sentence
-btnConfirm.addEventListener("click", function(){
-    console.log("story = \n", story);
-    if(curContent.textContent != "" && !story.includes(curContent.textContent)){
-        story += inputContent + curContent.textContent;
-        story += '<br>';
+btnConfirm.addEventListener("click", function () {
+    console.log("story = \n", curPageStory);
+    if (curContent.textContent != "" && !curPageStory.includes(curContent.textContent)) {
+        curPageStory += inputContent + curContent.textContent;
+        curPageStory += '<br>';
         console.log("new content");
     }
-    
 })
 
+function initStory(){
+    curPageStory = [];
+}
+
+function showStory(story){
+    resultContent.innerHTML = story;
+}
+
 //Send the first sentence and show the responce
-$('.btnTxtSubmit').click(function(){
+$('.btnTxtSubmit').click(function () {
     $.ajax({
         url: "/getText/",
         type: 'POST',
@@ -368,39 +384,105 @@ $('.btnTxtSubmit').click(function(){
 });
 
 //Only show the result, it's useless now
-$('.btnTxtGet').click(function(){
+$('.btnTxtGet').click(function () {
     // resultContent.textContent = "讓我想想……"
     $.ajax({
         url: "/generatingText/",
         type: 'GET',
-        success: function(response){
+        success: function (response) {
             console.log('success', response.generatingText)
             curContent.textContent = response.generatingText
-            resultContent.innerHTML = story + inputContent + response.generatingText
+            resultContent.innerHTML = curPageStory + inputContent + response.generatingText
         },
-        error : function(error){
+        error: function (error) {
             console.log('error', error)
         }
     });
 
 });
 
-function txtGet()
-{
+function txtGet() {
     $.ajax({
         url: "/generatingText/",
         type: 'GET',
-        success: function(response){
+        success: function (response) {
             console.log('success', response.generatingText)
             curContent.textContent = response.generatingText
-            resultContent.innerHTML = story + inputContent + response.generatingText
+            resultContent.innerHTML = curPageStory + inputContent + response.generatingText
         },
-        error : function(error){
+        error: function (error) {
             console.log('error', error)
         }
 
     });
 };
+
+//page control area
+let curPage = 1;
+let maxPage = 1;
+
+const btnLastPage = document.getElementById('btnLastPage');
+const btnNextPage = document.getElementById('btnNextPage');
+btnLastPage.addEventListener('click', turnLastPage);
+function turnLastPage(){
+    if(curPage > 1){
+        curPage -= 1;
+        if(curPageStrokes.length==0){
+            maxPage-=1;
+        }
+        clearCurPageContent();
+        turnToThePage(curPage);
+    }
+    showCurPageInfo();
+}
+btnNextPage.addEventListener('click', turnNextPage);
+function turnNextPage(){
+    clearCurPageContent();
+    if(curPage == maxPage){
+        // add new page, store current page infomation
+        if(curPageStrokes.length > 0){
+            curPage += 1;
+            maxPage += 1;
+            wholeBookStrokes.push(curPageStrokes);
+            wholeBookStrokesColors.push(curPageStrokesColors);
+            wholeBookStory.push(curPageStory);
+            initStroke();
+            initStory();
+        }
+    }else{
+        curPage += 1;
+        turnToThePage(curPage);
+    }
+    showCurPageInfo();
+}
+
+function clearCurPageContent(){
+    ctx.clearRect(0, 0, sketchingCanvas.width, sketchingCanvas.height);
+    gctx.clearRect(0, 0, generatingCanvas.width, generatingCanvas.height);
+    textInput.textContent = ""
+    curContent.textContent = ""
+    resultContent.textContent = ""
+}
+
+function turnToThePage(page){
+    console.log(wholeBookStrokes)
+    console.log(wholeBookStrokesColors)
+    curPageStrokes = wholeBookStrokes[page-1]
+    curPageStrokesColors = wholeBookStrokesColors[page-1]
+    curPageStory = wholeBookStory[page-1]
+    drawOnCanvas(curPageStrokes, curPageStrokesColors)
+    showStory(curPageStory);
+}
+
+function showCurPageInfo(){
+    page_info = document.getElementById('page_info');
+    page_info.textContent = "現在頁數：" + curPage + "/" + maxPage;
+    if (curPage == maxPage){
+        btnNextPage.innerHTML = "新增頁面"
+    }else{
+        btnNextPage.innerHTML = "下一頁"
+    }
+}
 
 //Now, we're going to save the whole book
 title = ""
@@ -409,33 +491,39 @@ author = ""
 const titleInput = document.getElementById('titleInput');
 const authorInput = document.getElementById('authorInput');
 
-titleInput.addEventListener("input", function(e){
+titleInput.addEventListener("input", function (e) {
     title = e.target.value;
 });
 
-authorInput.addEventListener("input", function(e){
+authorInput.addEventListener("input", function (e) {
     author = e.target.value;
 })
 
 
 
-$("#btnSaveStory").click(function(){
-    strStrokes = JSON.stringify(strokes)
-    if( title !=""){
+$("#btnSaveStory").click(function () {
+    if(curPageStrokes.length != 0 && curPage == maxPage){
+        wholeBookStrokes.push(curPageStrokes);
+        wholeBookStrokesColors.push(curPageStrokesColors);
+        wholeBookStory.push(curPageStory);
+    }
+    strWholeBookStrokes = JSON.stringify(wholeBookStrokes);
+    strWholeBookStrokesColor = JSON.stringify(wholeBookStrokesColors);
+    strWholeBookStory = JSON.stringify(wholeBookStory);
+    if (title != "") {
         console.log('in POST')
-        console.log(strokes)
-        console.log(strStrokes)
-
+        console.log(curPageStrokes)
+        console.log(strWholeBookStrokes)
         $.ajax({
             url: "/story-save/",
             type: "POST",
             data: {
-                'title':title,
-                'description':'',
-                'author':author,
-                'story':story,
-                'sketch_strokes':strStrokes,
-                'sketch_colors':'',
+                'title': title,
+                'description': '',
+                'author': author,
+                'story': strWholeBookStory,
+                'sketch_strokes': strWholeBookStrokes,
+                'sketch_colors': strWholeBookStrokesColor,
             }
         })
     }

@@ -81,12 +81,12 @@ body {
     margin: 5px;
 }
 
-.horizental, .bottom, .page, .story_save {
+.horizental, .bottom, .page, .story_save, .page_turn {
     background-color: #caf2ff;
-    margin-top: 2px;
+    margin: 2px;
     border: 5px solid skyblue;
     border-radius: 20px;
-    padding: 5px;
+    padding: 10px;
 }
 
 .button {
@@ -103,7 +103,7 @@ body {
 
 .left, .right{
     float: left;
-    padding: 20px;
+    /* padding: 20px; */
 }
 
 
@@ -169,14 +169,14 @@ body {
     margin: 5px;
 }
 
-.chatArea{
+/* .chatArea{
     float: left;
     width: 50%;
 }
 .story{
     float: left;
     width: 50%;
-}
+} */
 
 .wrap {
     width: 1200px;
