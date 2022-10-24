@@ -3,17 +3,19 @@
 {% block content %}
 <div class="whole">
     <div class="wrap">
-        <div class="horizental">
+        <div class="painting_area">
             <div class="left">
-                <div class="canvas_left">
+                <div class="aicanvas_area">
                     <h1>AI畫布</h1>
                     <canvas id="generatingBoard"></canvas>
                     <div class="button">
-                        <button id="btnClear" class="btnClear">清除畫布</button>
-                        <button id="btnGet" class="btnGet">生成圖形</button>
+                        <button id="btnClear" class="btnClear">
+                            {% load static %}
+                            <img src="{% static 'png/eraser.png' %}" width="60" height="40"></button>
+                        <button id="btnGet" class="btnGet"><img id="imgBtnGet"src="{% static 'png/bot_laugh.png'%}" width="70"></button>
                         <!-- <button id="btnDraw" class="btnDraw">生成圖形</button> -->
                     </div>
-                    <select name="" id="options">
+                    <select name="options" id="options">
                         {% include 'casual/options.html'%}
                     </select>
                     <div class="palette">
@@ -26,14 +28,14 @@
                 </div>
             </div>
             <div class="right">
-                <div class="canvas_right">
+                <div class="canvas_area">
                     <h1>畫布</h1>
                     <canvas id="sketchingBoard"></canvas>
                     <div class="clearfix"></div>
-                    <select name="" id="optionsSave">
+                    <!-- <select name="" id="optionsSave">
                         {% include 'casual/options.html'%}
                     </select>
-                    <button id="btnSubmit" class="btnSubmit">儲存項目</button>
+                    <button id="btnSubmit" class="btnSubmit">儲存項目</button> -->
                 </div>
             </div>
             <div class="clearfix"></div>
@@ -42,8 +44,11 @@
             <div class="left" style="width: 50%;">
                 <div class="story">
                     <h1>故事內容</h1>
-                    <p id="storyResult"></p>
-                    <button id="btnTxtConfirm">確定句子</button>
+                    <div>
+                        <p id="storyResult"></p>
+                        <button id="btnTxtConfirm"><img src="{% static 'png/writedown.png'%}" width="70"></button>
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
             </div>
             <div class="right" style="width: 50%;">
@@ -52,7 +57,7 @@
                     <div class="inputArea">
                         <textarea name="textInput" id="textInput" cols="30" rows="5" placeholder="寫句話吧！"></textarea>
                         <div class="txtAreaBtn" style="width: 60px;">
-                            <button id="btnTxtSubmit" class="btnTxtSubmit">生成句子</button>
+                            <button id="btnTxtSubmit" class="btnTxtSubmit"><img id="imgBtnTxtSubmit" src="{% static 'png/bot_laugh.png'%}" width="70"></button>
                             <!-- <button id="btnTxtGet" class="btnTxtGet">生成句子</button> -->
                         </div>
                         <div class="clearfix"></div>
@@ -63,20 +68,20 @@
             </div>
             <div class="clearfix"></div>
         </div>
-        <div class="left" style="width: 50%;">
+        <div class="left" style="background-image: url(../../../static/png/wooden_background.png); background-size: cover;width: 50%;">
             <div class="page_turn" style="height: 130px;">
                 <h1 id="page_info">現在頁數：1/1</h1>
-                <button id="btnLastPage">上一頁</button>
-                <button id="btnNextPage">新增頁面</button>
+                <button id="btnLastPage"><img id="imgBtnLastPage" src="{% static 'png/arrow_left.png'%}" height="50"></button>
+                <button id="btnNextPage"><img id="imgBtnNextPage" src="{% static 'png/plus.png'%}" height="50"></button>
             </div>
         </div>
-        <div class="right" style="width: 50%; ">
+        <div class="right" style="background-image: url(../../../static/png/wooden_background.png); background-size: cover;width: 50%; ">
             <div class="story_save" style="height: 130px;">
                 <h1>故事標題</h1>
                 <textarea name="titleInput" id="titleInput" cols="30" rows="2" placeholder=""></textarea>
                 <h1>作者名稱</h1>
                 <textarea name="authorInput" id="authorInput" cols="30" rows="2" placeholder=""></textarea>
-                <button id="btnSaveStory">保存故事</button>
+                <button id="btnSaveStory"><img id="imgBtnNextPage" src="{% static 'png/disk.png'%}" height="30"></button>
             </div>
         </div>
         <div class="clearfix"></div>

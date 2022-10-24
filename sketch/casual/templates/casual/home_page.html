@@ -8,7 +8,7 @@
     <div class="flexContainer">
         {% for book in books %}
         <div class="books">
-            <h5>{{book.author}} —— <a href="/book/{{book.id}}">{{book.title}}</a></h5>
+        <h2>{{book.author}} —— <a href="/book/{{book.id}}">{{book.title}}</a></h5>
             <canvas class="coverCanvas">{{book.sketch_strokes}}</canvas>
         </div>
 
