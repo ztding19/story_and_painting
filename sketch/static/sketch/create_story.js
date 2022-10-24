@@ -230,8 +230,10 @@ function generateSketch(response) {
     AIstrokesExist = true;
     gcanvasPosX = generatingCanvas.offsetLeft;
     gcanvasPosY = generatingCanvas.offsetTop;
-    curPanX = gcanvasPosX + 50;
-    curPanY = gcanvasPosY - 120;
+    // curPanX = gcanvasPosX + 50;
+    // curPanY = gcanvasPosY - 80;
+    curPanX = 50
+    curPanY = 50
     console.log(curPanX, curPanY);
     gctx.lineWidth = 1.5;
     gctx.lineCap = 'round';
@@ -488,7 +490,7 @@ function showCurPageInfo(){
     page_info.textContent = "現在頁數：" + curPage + "/" + maxPage;
     if (curPage == maxPage){
         // btnNextPage.innerHTML = "新增頁面"
-        imgBtnNextPage.src = "/static/png/plus.png"
+        imgBtnNextPage.src = "/static/png/arrow_right.png"
     }else{
         // btnNextPage.innerHTML = "下一頁"
         imgBtnNextPage.src = "/static/png/arrow_right.png"
