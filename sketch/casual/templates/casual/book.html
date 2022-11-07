@@ -3,16 +3,17 @@
 {% block content %}
 <div class="wrap">
     <div class="page">   
-        <h1>{{book.title}}</h1>
-        <div>
+        <div id="imgPage">
+            <h1 style="position: relative; top: 100px;">{{book.title}}</h1>
             <canvas id="pageCanvas"></canvas>
         </div>
         <div style="margin: 10px;">
-            <h3 id="pageInfo">現在頁數：1/1</h3>
+            <h1 id="pageInfo">現在頁數：1/1</h3>
         </div>
         <div style="margin: 10px;">
-            <button id="btnLastPage">上一頁</button>
-            <button id="btnNextPage">下一頁</button>    
+            {% load static %}
+            <button id="btnLastPage"><img id="imgBtnLastPage" src="{% static 'png/arrow_left.png'%}" width="50"></button>
+            <button id="btnNextPage"><img id="imgBtnNextPage" src="{% static 'png/arrow_right.png'%}" width="50"></button>    
         </div>
     </div>    
 </div>

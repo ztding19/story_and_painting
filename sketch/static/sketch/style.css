@@ -57,22 +57,66 @@ table {
 
 .navbar {
     /* background-image: url('../page_background_ori.png'); */
-    background-color: rgb(119, 167, 255);
-    height: 30px;
+    /* background-color: rgb(119, 167, 255); */
+    /* background-color: blanchedalmond; */
+    height: 80px;
 }
+
+@import url("https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap");
 
 body {
     /* background-image: url('../page_background.png'); */
     /* background-repeat: no-repeat;     */
-    background-color: #e2f3fc;
+    /* background-color: #e2f3fc; */
+    background-color: blanchedalmond;
+    background-image: url(../../../static/png/wooden_background.png); 
+    background-size: 60%;
+    font-family: 'Helvetica', 'Arial', 'Noto Sans TC', '黑體-繁','微軟正黑體', sans-serif !important;
+}
+
+h1 {
+    font-size: 20px;
+    font-weight: bold;
+    color:white;
+    /* -webkit-text-stroke: 1px black; */
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+h2 {
+    font-size: 16px;
+    font-weight: bold;
+    color:white;
+    /* -webkit-text-stroke: 1px black; */
+    text-shadow: -0.75px 0 black, 0 0.75px black, 0.75px 0 black, 0 -0.75px black;
+}
+
+a{
+    color:lightcyan;
 }
 
 #sketchingBoard, #pageCanvas, #generatingBoard {
     /* border: 2px solid salmon; */
-    background-color: white;
-    border: 3px solid rgb(94, 145, 249);
-    border-radius: 5px;
+    /* background-color: white; */
+    /* border: 3px solid rgb(94, 145, 249); */
+    /* border: 5px solid white; */
+    /* border-radius: 5px; */
     margin: 5px;
+}
+
+#sketchingBoard
+{
+    width: 700px;
+    height: 450px;
+    /* background-image: url(../../../static/png/sketchbook_T.png);  */
+    /* background-image: url(../../../static/png/canvas_only.png); 
+    background-size: cover; */
+}
+
+#generatingBoard {
+    width: 250px;
+    height: 250px;
+    background-image: url(../../../static/png/sketchbook_T.png); 
+    background-size: cover;
+    border: 1px solid gray;
 }
 
 
@@ -81,12 +125,23 @@ body {
     margin: 5px;
 }
 
-.horizental, .bottom, .page, .story_save, .page_turn {
-    background-color: #caf2ff;
+.painting_area, .bottom, .page, .story_save, .page_turn {
+    /* background-color: #caf2ff; */
+    background-color: rgba(255, 235, 205, 0.6);
     margin: 2px;
-    border: 5px solid skyblue;
-    border-radius: 20px;
+    /* border: 5px solid skyblue; */
+    /* border: 5px solid white; */
+    /* border-radius: 20px; */
     padding: 10px;
+}
+
+.canvas_area {
+    background-image: url(../../../static/png/canvas_only.png); 
+    background-size: cover; 
+    width: 770px; 
+    height: 495px; 
+    text-align: center;
+    border: 1px solid gray;
 }
 
 .button {
@@ -101,6 +156,21 @@ body {
     border: solid 0.5px black;
 }
 
+#btnClear, #btnGet, #btnTxtSubmit ,#btnTxtConfirm, #btnLastPage, #btnNextPage, #btnSaveStory{
+    border: 0px;
+    background-color: transparent;
+}
+
+#btnLastPage {
+    margin-right: 10px;
+}
+
+#btnTxtSubmit:active, #btnGet:active, #btnClear:active, #btnTxtConfirm:active, #btnLastPage:active, #btnNextPage:active, #btnSaveStory:active {
+    /* background-color: #3e8e41; */
+    /* box-shadow: 0 5px blanchedalmond; */
+    transform: translateY(4px);
+}
+
 .left, .right{
     float: left;
     /* padding: 20px; */
@@ -113,9 +183,12 @@ body {
 
 .palette{
     /* background-color: rgb(162, 229, 255); */
-    background-color: white;
-    border: 3px solid rgb(94, 145, 249);
-    border-radius: 5px;
+    background-color: cornsilk;
+    /* border: 3px solid rgb(94, 145, 249); */
+    border: 1px solid gray;
+    /* border-radius: 5px; */
+    /* background-image: url(../../../static/png/wooden_background.png); */
+    background-size:cover;
     padding: 3px;
     margin: 5px;
 }
@@ -130,14 +203,21 @@ body {
     background-color: aquamarine;
 } */
 
+.bottom {
+    background-color: rgba(255, 235, 205, 0.6);
+    /* background-image: url(../../../static/png/wooden_background.png);  */
+    /* background-size: cover; */
+}
+
 #textInput {
     width:70%;
     background-color: white;
-    border: 3px solid rgb(94, 145, 249);
-    border-radius: 5px;
+    /* border: 3px solid rgb(94, 145, 249); */
+    /* border: 5px solid white; */
+    /* border-radius: 5px; */
 }
 
-#textInput, .txtAreaBtn{
+#textInput, .txtAreaBtn, #storyResult, #btnTxtConfirm{
     float: left;
     margin: 5px;
     /* padding: 20px; */
@@ -145,25 +225,34 @@ body {
 
 #curContent, .curContent {
     height: 50%;
+    border: 1px solid gray;
 }
 
 #curContent{
     /* background-color: white;
     border: 2px solid green; */
     background-color: white;
-    border: 3px solid rgb(94, 145, 249);
-    border-radius: 5px;
+    /* border: 3px solid rgb(94, 145, 249); */
+    /* border: 5px solid white; */
+    /* border-radius: 5px; */
     width: 80%;
     height: 50px;
     margin: 5px;
 }
 
+/* .story  {
+    background-image: url(../../../static/png/note_page_empty.png); 
+    background-size: auto;
+} */
+
 #storyResult{
     /* background-color: white;
     border: 2px solid cornflowerblue; */
     background-color: white;
-    border: 3px solid rgb(94, 145, 249);
-    border-radius: 5px;
+    border: 1px solid gray;
+    /* border: 3px solid rgb(94, 145, 249); */
+    /* border: 5px solid white; */
+    /* border-radius: 5px; */
     width: 80%;
     height: 100px;
     margin: 5px;
@@ -193,26 +282,44 @@ body {
 }
 
 .books {
-    padding: 20px; 
-    width: 350px; 
+    padding: 40px; 
+    width: 360px; 
     height: 240px; 
     margin: 10px;
     text-align: center;
-    border: 3px solid rgb(94, 145, 249);
-    background-color: #caf2ff;
+    /* background-color: cornsilk; */
     border-radius: 5px;
-}
+    /* background-color: #caf2ff;
+    border: 3px solid rgb(94, 145, 249);
+    border-radius: 5px; */
+    background-image: url(../../../static/png/sketchbook_cover.png);
+    background-size: contain;
+} 
 
 .coverCanvas {
-    border: 2px solid royalblue; 
-    width: 280px; 
-    height: 180px;
+    /* border: 2px solid royalblue;  */
+    border: 1px solid gray;
+    border-radius: 10px;
+    width: 250px; 
+    height: 160px;
     background-color: white;
-    margin: 10px;
+    margin: 5px;
+}
+
+#imgPage {
+    /* width: 1000px; */
+    height: 760px;
+    background-image: url(../../../static/png/sketchbook_page.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    /* background-position: center; */
+    /* text-align: center; */
 }
 
 #pageCanvas {
-    border: solid 2px royalblue;
+    margin-top: 120px;
+    background-color: whitesmoke;
+    border: solid 1px gray;
 }
 
 .page {

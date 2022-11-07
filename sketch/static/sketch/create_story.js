@@ -39,14 +39,14 @@ function changeDataset() {
     datasetName = this.value
 }
 
-//from optionsSave get selected one
-let datasetOptionsSave = document.getElementById("optionsSave");
-datasetOptionsSave.onclick = changeDatasetSave;
+// //from optionsSave get selected one
+// let datasetOptionsSave = document.getElementById("optionsSave");
+// datasetOptionsSave.onclick = changeDatasetSave;
 
-function changeDatasetSave() {
-    console.log(this.value)
-    datasetNameSave = this.value
-}
+// function changeDatasetSave() {
+//     console.log(this.value)
+//     datasetNameSave = this.value
+// }
 
 //change the current color of pen
 const palette = document.querySelectorAll('.btnColors')
@@ -230,8 +230,10 @@ function generateSketch(response) {
     AIstrokesExist = true;
     gcanvasPosX = generatingCanvas.offsetLeft;
     gcanvasPosY = generatingCanvas.offsetTop;
-    curPanX = gcanvasPosX + 50;
-    curPanY = gcanvasPosY + 10;
+    // curPanX = gcanvasPosX + 50;
+    // curPanY = gcanvasPosY - 80;
+    curPanX = 50
+    curPanY = 50
     console.log(curPanX, curPanY);
     gctx.lineWidth = 1.5;
     gctx.lineCap = 'round';
@@ -268,23 +270,25 @@ function generateSketch(response) {
 }
 
 
-//Save strokes to datasetNameSave
-$(document).ready(function () {
-    $(".btnSubmit").click(function () {
-        $.ajax({
-            urls: '',
-            type: 'POST',
-            data: {
-                'stroke_arr[]': curPageStrokes,
-                'dataset_name': datasetNameSave
-            },
-        });
-    });
-});
+// //Save strokes to datasetNameSave
+// $(document).ready(function () {
+//     $(".btnSubmit").click(function () {
+//         $.ajax({
+//             urls: '',
+//             type: 'POST',
+//             data: {
+//                 'stroke_arr[]': curPageStrokes,
+//                 'dataset_name': datasetNameSave
+//             },
+//         });
+//     });
+// });
 
+const imgBtnGet = document.getElementById('imgBtnGet')
 
 //Get AI strokes and draw from datasetName
 $(".btnGet").click(function () {
+    imgBtnGet.src = "/static/png/bot_loading.png"
     AIstrokes = [];
     $.ajax({
         url: "/getStroke/",
@@ -322,7 +326,7 @@ function drawAfterSubmitDataset() {
                 success: function (response) {
                     console.log('success', response.test)
                     AIstrokes = response.test
-                    if (AIstrokes.length > 0) {
+                    if (AIstrokes.length > 0) {  
                         generateSketch(AIstrokes);
                     }
                 },
@@ -331,6 +335,7 @@ function drawAfterSubmitDataset() {
                 }
             });
         } else {
+            imgBtnGet.src = "/static/png/bot_heart.png" 
             console.log('get Stroke');
             clearInterval(tryDrawingInterval);
         }
@@ -344,6 +349,7 @@ let inputContent = ""
 let curPageStory = ""
 
 const textInput = document.getElementById('textInput')
+var imgBtnTxtSubmit = document.getElementById('imgBtnTxtSubmit')
 const curContent = document.getElementById('curContent')
 const resultContent = document.getElementById('storyResult')
 const btnConfirm = document.getElementById('btnTxtConfirm')
@@ -373,6 +379,7 @@ function showStory(story){
 
 //Send the first sentence and show the responce
 $('.btnTxtSubmit').click(function () {
+    imgBtnTxtSubmit.src="/static/png/bot_loading.png"
     $.ajax({
         url: "/getText/",
         type: 'POST',
@@ -409,9 +416,11 @@ function txtGet() {
             console.log('success', response.generatingText)
             curContent.textContent = response.generatingText
             resultContent.innerHTML = curPageStory + inputContent + response.generatingText
+            imgBtnTxtSubmit.src="/static/png/bot_heart.png"
         },
         error: function (error) {
             console.log('error', error)
+            imgBtnTxtSubmit.src="/static/png/bot_warning.png"
         }
 
     });
@@ -423,6 +432,8 @@ let maxPage = 1;
 
 const btnLastPage = document.getElementById('btnLastPage');
 const btnNextPage = document.getElementById('btnNextPage');
+const imgBtnLastPage = document.getElementById('imgBtnLastPage')
+const imgBtnNextPage = document.getElementById('imgBtnNextPage')
 btnLastPage.addEventListener('click', turnLastPage);
 function turnLastPage(){
     if(curPage > 1){
@@ -478,9 +489,11 @@ function showCurPageInfo(){
     page_info = document.getElementById('page_info');
     page_info.textContent = "現在頁數：" + curPage + "/" + maxPage;
     if (curPage == maxPage){
-        btnNextPage.innerHTML = "新增頁面"
+        // btnNextPage.innerHTML = "新增頁面"
+        imgBtnNextPage.src = "/static/png/arrow_right.png"
     }else{
-        btnNextPage.innerHTML = "下一頁"
+        // btnNextPage.innerHTML = "下一頁"
+        imgBtnNextPage.src = "/static/png/arrow_right.png"
     }
 }
 
