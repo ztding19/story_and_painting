@@ -129,6 +129,7 @@ buttonClear.addEventListener("click", function (e) {
     initStroke();
 });
 
+// it normaly copy draw according to current pageStrokes, for undo, page changing
 function drawOnCanvas(strokes, colors){
     console.log(strokes)
     console.log(colors)
@@ -173,6 +174,83 @@ btnUndo.addEventListener("click", function () {
 
 })
 
+const AISketchSizeSlider = document.getElementById("AISketchSizeFix");
+const AISketchPosXSlider = document.getElementById("AISketchPosXFix");
+const AISketchPosYSlider = document.getElementById("AISketchPosYFix");
+
+var AISketchSize = 1.0;
+var AISketchPosX = 0.0;
+var AISketchPosY = 0.0;
+
+AISketchSizeSlider.oninput = changeAISketchSetting;
+AISketchPosXSlider.oninput = changeAISketchSetting;
+AISketchPosYSlider.oninput = changeAISketchSetting;
+
+function changeAISketchSetting(){
+    if ((AISketchSizeSlider.value * 0.01 != AISketchSize) || (AISketchPosXSlider.value != AISketchPosX) || ((AISketchPosYSlider.value != AISketchPosY))){
+        AISketchSize = AISketchSizeSlider.value * 0.01;
+        AISketchPosX = AISketchPosXSlider.value * 1;
+        AISketchPosY = AISketchPosYSlider.value * 1;
+        console.log("changing： ", AISketchSize, AISketchPosX, AISketchPosY);
+
+        gctx.clearRect(0, 0, generatingCanvas.width, generatingCanvas.height);
+        AIstrokesExist = true;
+        gcanvasPosX = generatingCanvas.offsetLeft;
+        gcanvasPosY = generatingCanvas.offsetTop;
+        curPanX = 50.0 + AISketchPosX;
+        curPanY = 50.0 + AISketchPosY;
+        console.log(curPanX, curPanY);
+        gctx.lineWidth = 1.5;
+        gctx.lineCap = 'round';
+        gctx.strokeStyle = '#008080';
+        gctx.beginPath();
+        i = 0;
+        len = AIstrokes.length;
+        liftPan = false;
+
+        while (i < len) {
+            if (liftPan) {
+                gctx.moveTo(gcanvasPosX + curPanX + AIstrokes[i][0] * 10 * AISketchSize, gcanvasPosY + curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+                curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize;
+                curPanY = curPanY + AIstrokes[i][1] * 10 * AISketchSize;
+                liftPan = false
+            } else {
+                gctx.lineTo(gcanvasPosX + curPanX + AIstrokes[i][0] * 10 * AISketchSize, gcanvasPosY + curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+                gctx.stroke()
+                curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize;
+                curPanY = curPanY + AIstrokes[i][1] * 10 * AISketchSize;
+                if (AIstrokes[i][2] == 1) liftPan = true
+            }
+            i += 1;
+        }
+        // let slowlydraw = setInterval(drawEachLine, 10);
+        // function drawEachLine() {
+        //     if (i >= len) {
+        //         clearInterval(slowlydraw);
+        //         console.log("clearInterval")
+        //         return;
+        //     }
+
+        //     if (liftPan) {
+        //         gctx.moveTo(gcanvasPosX + curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, gcanvasPosY + curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
+        //         curPanX = curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX;
+        //         curPanY = curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY;
+        //         liftPan = false
+        //         console.log('lift')
+        //     } else {
+        //         gctx.lineTo(gcanvasPosX + curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, gcanvasPosY + curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
+        //         gctx.stroke()
+        //         curPanX = curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX;
+        //         curPanY = curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY;
+        //         if (response[i][2] == 1) liftPan = true
+        //     }
+        //     i += 1;
+        // }        
+    }
+}
+
+function redrawAISrokesOnGeneratingBoard(e){}
+
 function copyAIStrokes(e) {
     console.log(AIstrokes)
     console.log(e.clientX, e.clientY)
@@ -195,26 +273,26 @@ function copyAIStrokes(e) {
         }
 
         if (liftPan) {
-            AIstrokesCopy[i][0] = curPanX + AIstrokesCopy[i][0] * 10;
-            AIstrokesCopy[i][1] = curPanY + AIstrokesCopy[i][1] * 10;
+            AIstrokesCopy[i][0] = curPanX + AIstrokesCopy[i][0] * 10 * AISketchSize;
+            AIstrokesCopy[i][1] = curPanY + AIstrokesCopy[i][1] * 10 * AISketchSize;
             // ctx.moveTo(AIstrokes[i][0], AIstrokes[i][1]);
-            ctx.moveTo(curPanX + AIstrokes[i][0] * 10, curPanY + AIstrokes[i][1] * 10);
-            curPanX = curPanX + AIstrokes[i][0] * 10;
-            curPanY = curPanY + AIstrokes[i][1] * 10;
+            ctx.moveTo(curPanX + AIstrokes[i][0] * 10 * AISketchSize, curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+            curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize;
+            curPanY = curPanY + AIstrokes[i][1] * 10 * AISketchSize;
             // curPanX = AIstrokes[i][0]
             // curPanY = AIstrokes[i][1]
             liftPan = false
             console.log('lift')
         } else {
-            AIstrokesCopy[i][0] = curPanX + AIstrokesCopy[i][0] * 10;
-            AIstrokesCopy[i][1] = curPanY + AIstrokesCopy[i][1] * 10;
+            AIstrokesCopy[i][0] = curPanX + AIstrokesCopy[i][0] * 10 * AISketchSize;
+            AIstrokesCopy[i][1] = curPanY + AIstrokesCopy[i][1] * 10 * AISketchSize;
             // ctx.lineTo(AIstrokes[i][0], AIstrokes[i][1])
-            ctx.lineTo(curPanX + AIstrokes[i][0] * 10, curPanY + AIstrokes[i][1] * 10);
+            ctx.lineTo(curPanX + AIstrokes[i][0] * 10 * AISketchSize, curPanY + AIstrokes[i][1] * 10 * AISketchSize);
             ctx.stroke()
             // curPanX = AIstrokes[i][0]
             // curPanY = AIstrokes[i][1]
-            curPanX = curPanX + AIstrokes[i][0] * 10;
-            curPanY = curPanY + AIstrokes[i][1] * 10;
+            curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize;
+            curPanY = curPanY + AIstrokes[i][1] * 10 * AISketchSize;
             if (AIstrokes[i][2] == 1) liftPan = true
         }
         i += 1;
@@ -252,23 +330,22 @@ function generateSketch(response) {
         }
 
         if (liftPan) {
-            gctx.moveTo(gcanvasPosX + curPanX + response[i][0] * 10, gcanvasPosY + curPanY + response[i][1] * 10);
-            curPanX = curPanX + response[i][0] * 10;
-            curPanY = curPanY + response[i][1] * 10;
+            gctx.moveTo(gcanvasPosX + curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, gcanvasPosY + curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
+            curPanX = curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX;
+            curPanY = curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY;
             liftPan = false
             console.log('lift')
         } else {
-            gctx.lineTo(gcanvasPosX + curPanX + response[i][0] * 10, gcanvasPosY + curPanY + response[i][1] * 10);
+            gctx.lineTo(gcanvasPosX + curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, gcanvasPosY + curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
             gctx.stroke()
-            curPanX = curPanX + response[i][0] * 10;
-            curPanY = curPanY + response[i][1] * 10;
+            curPanX = curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX;
+            curPanY = curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY;
             if (response[i][2] == 1) liftPan = true
         }
         i += 1;
     }
 
 }
-
 
 // //Save strokes to datasetNameSave
 // $(document).ready(function () {

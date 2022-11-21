@@ -134,7 +134,7 @@ a{
     top: 40%;
     width: 200px;
     /* top: 0px; */
-    transform:rotate(270deg);
+    transform:rotate(90deg);
 }
 
 #options {
