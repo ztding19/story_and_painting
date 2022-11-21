@@ -119,6 +119,23 @@ a{
     border: 1px solid gray;
 }
 
+.slidecontainer {
+    width: 250px;
+    text-align: center;
+}
+
+.slider {
+    width: 80%;
+}
+
+.verticalSlider {
+    position: relative;
+    left: -45%;
+    top: 40%;
+    width: 200px;
+    /* top: 0px; */
+    transform:rotate(270deg);
+}
 
 #options {
     position: relative;

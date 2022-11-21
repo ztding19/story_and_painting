@@ -4,10 +4,21 @@
 <div class="whole">
     <div class="wrap">
         <div class="painting_area">
-            <div class="left">
+            <div class="left" style="width:26%">
                 <div class="aicanvas_area">
                     <h1>AI畫布</h1>
-                    <canvas id="generatingBoard"></canvas>
+                    <div style="display: flex; justify-content: flex-start;">
+                        <canvas id="generatingBoard" ></canvas>
+                        <div>
+                            <h2 style="position:relative; top: 3%; left: 3%;">↑</h2>
+                            <span><input type="range" min="-50" max="50" value="0" class="verticalSlider" id="aiYFix"></span>
+                            <h2 style="position:relative; top: 75%; left: 3%;">↓</h2>
+                        </div>
+                    </div>
+                    <div class="slidecontainer">
+                        <h2>←<input type="range" min="-50" max="50" value="0" class="slider" id="aiXFix">→</h2>
+                        <h2>－<input type="range" min="1" max="200" value="100" class="slider" id="aiPaintSize">＋</h2>
+                    </div>
                     <div class="button">
                         <button id="btnClear" class="btnClear">
                             {% load static %}
@@ -27,7 +38,7 @@
                     </div>
                 </div>
             </div>
-            <div class="right">
+            <div class="right" style="width:70%">
                 <div class="canvas_area">
                     <h1>畫布</h1>
                     <canvas id="sketchingBoard"></canvas>
