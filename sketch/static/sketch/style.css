@@ -126,10 +126,14 @@ a{
 
 .slider {
     width: 80%;
+    outline: none;
+    border-radius: 5px;
 }
 
 .verticalSlider {
     position: relative;
+    outline: none;
+    border-radius: 5px;
     left: -45%;
     top: 40%;
     width: 200px;
