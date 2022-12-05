@@ -9,6 +9,8 @@ let AIstrokes = [];
 let AIstrokesCopy = [];
 let AIstrokesExist = false;
 let penColor = '#000000';
+let AIPanStartX = 0.0;
+let AIPanStartY = 0.0;
 
 const generatingCanvas = document.querySelector("#generatingBoard");
 const gctx = generatingCanvas.getContext("2d");
@@ -70,6 +72,7 @@ function initStroke() {
 }
 
 function startPosition(e) {
+    console.log('canvasPos', canvasPosX, canvasPosY)
     if (e.button == 0) {     //left button : draw on canvas
         if (lastPanPositionX != 0 && lastPanPositionY != 0) {
             newStroke = true;
@@ -82,7 +85,7 @@ function startPosition(e) {
     }
     else if (e.button == 1 || e.button == 2) { //middle button or right button : generate AI strokes
         console.log('middle button or middle button')
-        copyAIStrokes(e)
+        copyAIStrokes(e, 0, 0);
     }
 
 }
@@ -103,6 +106,7 @@ function draw(e) {
     ctx.lineCap = 'round';
     ctx.strokeStyle = penColor;
     //current paiting board position is (500,100)
+    console.log('draw',e.clientX - canvasPosX, e.clientY - canvasPosY)
     ctx.lineTo(e.clientX - canvasPosX, e.clientY - canvasPosY);
     ctx.stroke();
 
@@ -191,15 +195,17 @@ function changeAISketchSetting(){
         AISketchSize = AISketchSizeSlider.value * 0.01;
         AISketchPosX = AISketchPosXSlider.value * 1;
         AISketchPosY = AISketchPosYSlider.value * 1;
-        console.log("changing： ", AISketchSize, AISketchPosX, AISketchPosY);
+        // console.log("changing： ", AISketchSize, AISketchPosX, AISketchPosY);
 
         gctx.clearRect(0, 0, generatingCanvas.width, generatingCanvas.height);
         AIstrokesExist = true;
         gcanvasPosX = generatingCanvas.offsetLeft;
         gcanvasPosY = generatingCanvas.offsetTop;
-        curPanX = 50.0 + AISketchPosX;
-        curPanY = 50.0 + AISketchPosY;
-        console.log(curPanX, curPanY);
+        AIPanStartX = 50.0 + AISketchPosX;
+        AIPanStartY = 50.0 + AISketchPosY;
+        curPanX = AIPanStartX;
+        curPanY = AIPanStartY;
+        console.log(AIPanStartX, AIPanStartY);
         gctx.lineWidth = 1.5;
         gctx.lineCap = 'round';
         gctx.strokeStyle = '#008080';
@@ -210,53 +216,35 @@ function changeAISketchSetting(){
 
         while (i < len) {
             if (liftPan) {
-                gctx.moveTo(gcanvasPosX + curPanX + AIstrokes[i][0] * 10 * AISketchSize, gcanvasPosY + curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+                // gctx.moveTo(gcanvasPosX + curPanX + AIstrokes[i][0] * 10 * AISketchSize, gcanvasPosY + curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+                gctx.moveTo(curPanX + AIstrokes[i][0] * 10 * AISketchSize, curPanY + AIstrokes[i][1] * 10 * AISketchSize);
                 curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize;
                 curPanY = curPanY + AIstrokes[i][1] * 10 * AISketchSize;
                 liftPan = false
             } else {
-                gctx.lineTo(gcanvasPosX + curPanX + AIstrokes[i][0] * 10 * AISketchSize, gcanvasPosY + curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+                // gctx.lineTo(gcanvasPosX + curPanX + AIstrokes[i][0] * 10 * AISketchSize, gcanvasPosY + curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+                gctx.lineTo(curPanX + AIstrokes[i][0] * 10 * AISketchSize, curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+
                 gctx.stroke()
                 curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize;
                 curPanY = curPanY + AIstrokes[i][1] * 10 * AISketchSize;
                 if (AIstrokes[i][2] == 1) liftPan = true
             }
             i += 1;
-        }
-        // let slowlydraw = setInterval(drawEachLine, 10);
-        // function drawEachLine() {
-        //     if (i >= len) {
-        //         clearInterval(slowlydraw);
-        //         console.log("clearInterval")
-        //         return;
-        //     }
-
-        //     if (liftPan) {
-        //         gctx.moveTo(gcanvasPosX + curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, gcanvasPosY + curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
-        //         curPanX = curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX;
-        //         curPanY = curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY;
-        //         liftPan = false
-        //         console.log('lift')
-        //     } else {
-        //         gctx.lineTo(gcanvasPosX + curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, gcanvasPosY + curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
-        //         gctx.stroke()
-        //         curPanX = curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX;
-        //         curPanY = curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY;
-        //         if (response[i][2] == 1) liftPan = true
-        //     }
-        //     i += 1;
-        // }        
+        }     
     }
 }
 
 function redrawAISrokesOnGeneratingBoard(e){}
 
-function copyAIStrokes(e) {
-    console.log(AIstrokes)
-    console.log(e.clientX, e.clientY)
+function copyAIStrokes(e, shiftX, shiftY) {
+    // console.log(AIstrokes)
+    console.log("client", e.clientX, e.clientY)
     AIstrokesCopy = JSON.parse(JSON.stringify(AIstrokes))    //這是存對於畫布的絕對路徑的Array
-    curPanX = e.clientX - canvasPosX;
-    curPanY = e.clientY - canvasPosY;
+    curPanX = e.clientX - canvasPosX - shiftX;
+    curPanY = e.clientY - canvasPosY - shiftY;
+    console.log("shift", shiftX, shiftY);
+    console.log("curPan", curPanX, curPanY);
     ctx.lineWidth = 2;
     ctx.strokeStyle = penColor;
     ctx.beginPath()
@@ -297,7 +285,7 @@ function copyAIStrokes(e) {
         }
         i += 1;
     }
-    console.log(AIstrokesCopy)
+    // console.log(AIstrokesCopy)
     curPageStrokes.push(AIstrokesCopy);
     curPageStrokesColors.push(penColor);
 }
@@ -308,11 +296,13 @@ function generateSketch(response) {
     AIstrokesExist = true;
     gcanvasPosX = generatingCanvas.offsetLeft;
     gcanvasPosY = generatingCanvas.offsetTop;
-    // curPanX = gcanvasPosX + 50;
-    // curPanY = gcanvasPosY - 80;
-    curPanX = 50
-    curPanY = 50
-    console.log(curPanX, curPanY);
+    // AIPanStartX = gcanvasPosX + 50;
+    // AIPanStartY = gcanvasPosY - 80;
+    AIPanStartX = 50
+    AIPanStartY = 50
+    curPanX = AIPanStartX
+    curPanY = AIPanStartY
+    console.log(AIPanStartX, AIPanStartY);
     gctx.lineWidth = 1.5;
     gctx.lineCap = 'round';
     gctx.strokeStyle = '#008080';
@@ -330,13 +320,15 @@ function generateSketch(response) {
         }
 
         if (liftPan) {
-            gctx.moveTo(gcanvasPosX + curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, gcanvasPosY + curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
+            // gctx.moveTo(gcanvasPosX + curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, gcanvasPosY + curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
+            gctx.moveTo(curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
             curPanX = curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX;
             curPanY = curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY;
             liftPan = false
             console.log('lift')
         } else {
-            gctx.lineTo(gcanvasPosX + curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, gcanvasPosY + curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
+            // gctx.lineTo(gcanvasPosX + curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, gcanvasPosY + curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
+            gctx.lineTo(curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
             gctx.stroke()
             curPanX = curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX;
             curPanY = curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY;
@@ -345,6 +337,70 @@ function generateSketch(response) {
         i += 1;
     }
 
+}
+
+// Make the graph on AICanvas draggable to sketching board
+var copyCanvasImg = document.createElement('img');
+copyCanvasImg.classList.add('generatingBoardShadow');
+
+generatingCanvas.addEventListener('mousedown', dragStart);
+
+function dragStart(e){
+    console.log('drag start');
+    // console.log('classlist: ', JSON.stringify(generatingCanvas.classList));
+
+    e = e || window.event;
+    e.preventDefault();
+
+    cOffX = e.clientX;
+    cOffY = e.clientY;
+    console.log('cOff : ', cOffX, cOffY);
+
+    document.addEventListener('mousemove', dragMove);
+    document.addEventListener('mouseup', dragEnd);
+
+    copyCanvasImg.style.position = 'absolute';
+    copyCanvasImg.style.left = JSON.stringify(generatingCanvas.offsetLeft) + 'px';
+    copyCanvasImg.style.top = JSON.stringify(generatingCanvas.offsetTop) + 'px';
+    document.body.appendChild(copyCanvasImg);
+
+    generatingCanvas.classList.add('dragging');
+    // container.style.cursor = 'move';
+}
+
+function dragEnd(e){
+    console.log('drag end');
+
+    e = e || window.event;
+    e.preventDefault();
+
+    generatingCanvas.style.top = '0px';
+    generatingCanvas.style.left = '0px';
+
+    let elementDraggedOn = document.elementFromPoint(e.clientX, e.clientY);
+    if (elementDraggedOn.id == 'sketchingBoard'){
+        // console.log('work?')
+        console.log('panStart : ', AIPanStartX, AIPanStartY);
+        console.log('client - offset : ', cOffX-generatingCanvas.offsetLeft, cOffY - generatingCanvas.offsetTop);
+        console.log('shift : ', cOffX - generatingCanvas.offsetLeft - AIPanStartX, cOffY - generatingCanvas.offsetTop - AIPanStartY)
+        console.log('AIpanstart : ', AIPanStartX, AIPanStartY);
+        copyAIStrokes(e, cOffX - generatingCanvas.offsetLeft - AIPanStartX, cOffY - generatingCanvas.offsetTop - AIPanStartY);
+    }
+    
+    document.removeEventListener('mousemove', dragMove);
+    document.removeEventListener('mouseup', dragEnd);
+  
+    document.body.removeChild(copyCanvasImg);
+    generatingCanvas.classList.remove('dragging');
+    // container.style.cursor = null;
+}
+
+function dragMove(e){
+    e = e || window.event;
+    e.preventDefault();
+  
+    generatingCanvas.style.top = (e.clientY - cOffY).toString() + 'px';
+    generatingCanvas.style.left = (e.clientX - cOffX).toString() + 'px';
 }
 
 // //Save strokes to datasetNameSave

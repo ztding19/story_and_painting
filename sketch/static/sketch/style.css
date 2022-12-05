@@ -112,12 +112,35 @@ a{
 }
 
 #generatingBoard {
+    position: relative;
     width: 250px;
     height: 250px;
     background-image: url(../../../static/png/sketchbook_T.png); 
     background-size: cover;
     border: 1px solid gray;
+    z-index: 2;
+    /* top: 10px;
+    left: 10px; */
 }
+
+#generatingBoard.dragging {
+    background-image: none;
+    border: none;
+}
+
+.generatingBoardShadow {
+    width: 250px;
+    height: 250px;
+    background-image: url(../../../static/png/sketchbook_T.png); 
+    background-size: cover;
+    border: 1px solid gray;
+    z-index: 1;
+}
+
+/* .dragging {
+    opacity: .25;
+    background-image: none;
+} */
 
 .slidecontainer {
     width: 250px;
