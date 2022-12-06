@@ -201,8 +201,8 @@ function changeAISketchSetting(){
         AIstrokesExist = true;
         gcanvasPosX = generatingCanvas.offsetLeft;
         gcanvasPosY = generatingCanvas.offsetTop;
-        AIPanStartX = 50.0 + AISketchPosX;
-        AIPanStartY = 50.0 + AISketchPosY;
+        AIPanStartX = 125.0 + AISketchPosX;
+        AIPanStartY = 125.0 + AISketchPosY;
         curPanX = AIPanStartX;
         curPanY = AIPanStartY;
         console.log(AIPanStartX, AIPanStartY);
@@ -298,8 +298,8 @@ function generateSketch(response) {
     gcanvasPosY = generatingCanvas.offsetTop;
     // AIPanStartX = gcanvasPosX + 50;
     // AIPanStartY = gcanvasPosY - 80;
-    AIPanStartX = 50
-    AIPanStartY = 50
+    AIPanStartX = 125;
+    AIPanStartY = 125;
     curPanX = AIPanStartX
     curPanY = AIPanStartY
     console.log(AIPanStartX, AIPanStartY);
@@ -343,7 +343,30 @@ function generateSketch(response) {
 var copyCanvasImg = document.createElement('img');
 copyCanvasImg.classList.add('generatingBoardShadow');
 
+var windowScrollY = 0;
+
 generatingCanvas.addEventListener('mousedown', dragStart);
+
+function scaleSketchWhenDragging(e){
+    if (e.wheelDelta > 0 || e.key == 'w'){
+        // window.scrollTo(0, windowScrollY);
+        console.log('scale +');
+        // generatingCanvas.style.width = JSON.stringify(parseInt(generatingCanvas.style.width) + 1) + 'px';
+        // generatingCanvas.style.height = JSON.stringify(parseInt(generatingCanvas.style.height) + 1) + 'px';
+        // generatingCanvas.offsetWidth = parseInt(generatingCanvas.offsetWidth) + 1;
+        // generatingCanvas.offsetHeight = parseInt(generatingCanvas.offsetHeight) + 1;
+        // console.log(generatingCanvas.style.width);
+        AISketchSizeSlider.value = parseInt(AISketchSizeSlider.value) + 3;
+        changeAISketchSetting();
+    }
+    else if (e.wheelDelta < 0 || e.key == 's'){
+        // window.scrollTo(0, windowScrollY);
+        console.log('scale -');
+        AISketchSizeSlider.value = parseInt(AISketchSizeSlider.value) - 3;
+        changeAISketchSetting();
+    }
+    console.log('wheelDelta', e.wheelDelta);
+}
 
 function dragStart(e){
     console.log('drag start');
@@ -351,13 +374,25 @@ function dragStart(e){
 
     e = e || window.event;
     e.preventDefault();
-
+    console.log('body scroll : ', window.scrollY);
+    windowScrollY = window.scrollY;
     cOffX = e.clientX;
     cOffY = e.clientY;
     console.log('cOff : ', cOffX, cOffY);
 
     document.addEventListener('mousemove', dragMove);
     document.addEventListener('mouseup', dragEnd);
+    document.addEventListener('mousewheel', scaleSketchWhenDragging);
+    document.addEventListener('keydown', scaleSketchWhenDragging);
+
+
+    // document.addEventListener('keydown', function(e) {
+    //     if (e.key == "a"){
+    //         console.log('scale +');
+    //         AISketchSizeSlider.value = parseInt(AISketchSizeSlider.value) + 1;
+    //         changeAISketchSetting();
+    //     }
+    // });
 
     copyCanvasImg.style.position = 'absolute';
     copyCanvasImg.style.left = JSON.stringify(generatingCanvas.offsetLeft) + 'px';
@@ -377,6 +412,9 @@ function dragEnd(e){
     generatingCanvas.style.top = '0px';
     generatingCanvas.style.left = '0px';
 
+    generatingCanvas.style.width = '250px';
+    generatingCanvas.style.height = '250px';
+
     let elementDraggedOn = document.elementFromPoint(e.clientX, e.clientY);
     if (elementDraggedOn.id == 'sketchingBoard'){
         // console.log('work?')
@@ -389,6 +427,8 @@ function dragEnd(e){
     
     document.removeEventListener('mousemove', dragMove);
     document.removeEventListener('mouseup', dragEnd);
+    document.removeEventListener('mousewheel', scaleSketchWhenDragging);
+    document.removeEventListener('keydown', scaleSketchWhenDragging);
   
     document.body.removeChild(copyCanvasImg);
     generatingCanvas.classList.remove('dragging');
@@ -401,6 +441,8 @@ function dragMove(e){
   
     generatingCanvas.style.top = (e.clientY - cOffY).toString() + 'px';
     generatingCanvas.style.left = (e.clientX - cOffX).toString() + 'px';
+
+    
 }
 
 // //Save strokes to datasetNameSave
