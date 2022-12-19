@@ -183,6 +183,7 @@ const AISketchPosXSlider = document.getElementById("AISketchPosXFix");
 const AISketchPosYSlider = document.getElementById("AISketchPosYFix");
 
 var AISketchSize = 1.0;
+var AISketchFlipX = -1;
 var AISketchPosX = 0.0;
 var AISketchPosY = 0.0;
 
@@ -196,46 +197,55 @@ function changeAISketchSetting(){
         AISketchPosX = AISketchPosXSlider.value * 1;
         AISketchPosY = AISketchPosYSlider.value * 1;
         // console.log("changing： ", AISketchSize, AISketchPosX, AISketchPosY);
-
-        gctx.clearRect(0, 0, generatingCanvas.width, generatingCanvas.height);
-        AIstrokesExist = true;
-        gcanvasPosX = generatingCanvas.offsetLeft;
-        gcanvasPosY = generatingCanvas.offsetTop;
-        AIPanStartX = 125.0 + AISketchPosX;
-        AIPanStartY = 125.0 + AISketchPosY;
-        curPanX = AIPanStartX;
-        curPanY = AIPanStartY;
-        console.log(AIPanStartX, AIPanStartY);
-        gctx.lineWidth = 1.5;
-        gctx.lineCap = 'round';
-        gctx.strokeStyle = '#008080';
-        gctx.beginPath();
-        i = 0;
-        len = AIstrokes.length;
-        liftPan = false;
-
-        while (i < len) {
-            if (liftPan) {
-                // gctx.moveTo(gcanvasPosX + curPanX + AIstrokes[i][0] * 10 * AISketchSize, gcanvasPosY + curPanY + AIstrokes[i][1] * 10 * AISketchSize);
-                gctx.moveTo(curPanX + AIstrokes[i][0] * 10 * AISketchSize, curPanY + AIstrokes[i][1] * 10 * AISketchSize);
-                curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize;
-                curPanY = curPanY + AIstrokes[i][1] * 10 * AISketchSize;
-                liftPan = false
-            } else {
-                // gctx.lineTo(gcanvasPosX + curPanX + AIstrokes[i][0] * 10 * AISketchSize, gcanvasPosY + curPanY + AIstrokes[i][1] * 10 * AISketchSize);
-                gctx.lineTo(curPanX + AIstrokes[i][0] * 10 * AISketchSize, curPanY + AIstrokes[i][1] * 10 * AISketchSize);
-
-                gctx.stroke()
-                curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize;
-                curPanY = curPanY + AIstrokes[i][1] * 10 * AISketchSize;
-                if (AIstrokes[i][2] == 1) liftPan = true
-            }
-            i += 1;
-        }     
+        redrawAISrokesOnGeneratingBoard();
     }
 }
 
-function redrawAISrokesOnGeneratingBoard(e){}
+const AISketchFlipXButton = document.getElementById("AISketchFlip");
+
+AISketchFlipXButton.addEventListener('click', flipAISketch);
+
+function flipAISketch(){
+    AISketchFlipX = AISketchFlipX * -1;
+    redrawAISrokesOnGeneratingBoard();
+}
+
+function redrawAISrokesOnGeneratingBoard(){
+    gctx.clearRect(0, 0, generatingCanvas.width, generatingCanvas.height);
+    AIstrokesExist = true;
+    gcanvasPosX = generatingCanvas.offsetLeft;
+    gcanvasPosY = generatingCanvas.offsetTop;
+    AIPanStartX = 125.0 + AISketchPosX;
+    AIPanStartY = 125.0 + AISketchPosY;
+    curPanX = AIPanStartX;
+    curPanY = AIPanStartY;
+    console.log(AIPanStartX, AIPanStartY);
+    gctx.lineWidth = 1.5;
+    gctx.lineCap = 'round';
+    gctx.strokeStyle = '#008080';
+    gctx.beginPath();
+    i = 0;
+    len = AIstrokes.length;
+    liftPan = false;
+
+    while (i < len) {
+        if (liftPan) {
+            // gctx.moveTo(gcanvasPosX + curPanX + AIstrokes[i][0] * 10 * AISketchSize, gcanvasPosY + curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+            gctx.moveTo(curPanX + AIstrokes[i][0] * 10 * AISketchSize * AISketchFlipX, curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+            curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize * AISketchFlipX;
+            curPanY = curPanY + AIstrokes[i][1] * 10 * AISketchSize;
+            liftPan = false
+        } else {
+            // gctx.lineTo(gcanvasPosX + curPanX + AIstrokes[i][0] * 10 * AISketchSize, gcanvasPosY + curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+            gctx.lineTo(curPanX + AIstrokes[i][0] * 10 * AISketchSize * AISketchFlipX, curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+            gctx.stroke()
+            curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize * AISketchFlipX;
+            curPanY = curPanY + AIstrokes[i][1] * 10 * AISketchSize;
+            if (AIstrokes[i][2] == 1) liftPan = true
+        }
+        i += 1;
+    }
+}
 
 function copyAIStrokes(e, shiftX, shiftY) {
     // console.log(AIstrokes)
@@ -261,25 +271,25 @@ function copyAIStrokes(e, shiftX, shiftY) {
         }
 
         if (liftPan) {
-            AIstrokesCopy[i][0] = curPanX + AIstrokesCopy[i][0] * 10 * AISketchSize;
+            AIstrokesCopy[i][0] = curPanX + AIstrokesCopy[i][0] * 10 * AISketchSize * AISketchFlipX;
             AIstrokesCopy[i][1] = curPanY + AIstrokesCopy[i][1] * 10 * AISketchSize;
             // ctx.moveTo(AIstrokes[i][0], AIstrokes[i][1]);
-            ctx.moveTo(curPanX + AIstrokes[i][0] * 10 * AISketchSize, curPanY + AIstrokes[i][1] * 10 * AISketchSize);
-            curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize;
+            ctx.moveTo(curPanX + AIstrokes[i][0] * 10 * AISketchSize * AISketchFlipX, curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+            curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize * AISketchFlipX;
             curPanY = curPanY + AIstrokes[i][1] * 10 * AISketchSize;
             // curPanX = AIstrokes[i][0]
             // curPanY = AIstrokes[i][1]
             liftPan = false
             console.log('lift')
         } else {
-            AIstrokesCopy[i][0] = curPanX + AIstrokesCopy[i][0] * 10 * AISketchSize;
+            AIstrokesCopy[i][0] = curPanX + AIstrokesCopy[i][0] * 10 * AISketchSize * AISketchFlipX;
             AIstrokesCopy[i][1] = curPanY + AIstrokesCopy[i][1] * 10 * AISketchSize;
             // ctx.lineTo(AIstrokes[i][0], AIstrokes[i][1])
-            ctx.lineTo(curPanX + AIstrokes[i][0] * 10 * AISketchSize, curPanY + AIstrokes[i][1] * 10 * AISketchSize);
+            ctx.lineTo(curPanX + AIstrokes[i][0] * 10 * AISketchSize * AISketchFlipX, curPanY + AIstrokes[i][1] * 10 * AISketchSize);
             ctx.stroke()
             // curPanX = AIstrokes[i][0]
             // curPanY = AIstrokes[i][1]
-            curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize;
+            curPanX = curPanX + AIstrokes[i][0] * 10 * AISketchSize * AISketchFlipX;
             curPanY = curPanY + AIstrokes[i][1] * 10 * AISketchSize;
             if (AIstrokes[i][2] == 1) liftPan = true
         }
@@ -321,16 +331,16 @@ function generateSketch(response) {
 
         if (liftPan) {
             // gctx.moveTo(gcanvasPosX + curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, gcanvasPosY + curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
-            gctx.moveTo(curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
-            curPanX = curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX;
+            gctx.moveTo(curPanX + response[i][0] * 10 * AISketchSize * AISketchFlipX + AISketchPosX, curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
+            curPanX = curPanX + response[i][0] * 10 * AISketchSize * AISketchFlipX + AISketchPosX;
             curPanY = curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY;
             liftPan = false
             console.log('lift')
         } else {
             // gctx.lineTo(gcanvasPosX + curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, gcanvasPosY + curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
-            gctx.lineTo(curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX, curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
+            gctx.lineTo(curPanX + response[i][0] * 10 * AISketchSize * AISketchFlipX + AISketchPosX, curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY);
             gctx.stroke()
-            curPanX = curPanX + response[i][0] * 10 * AISketchSize + AISketchPosX;
+            curPanX = curPanX + response[i][0] * 10 * AISketchSize * AISketchFlipX + AISketchPosX;
             curPanY = curPanY + response[i][1] * 10 * AISketchSize + AISketchPosY;
             if (response[i][2] == 1) liftPan = true
         }
@@ -346,6 +356,20 @@ copyCanvasImg.classList.add('generatingBoardShadow');
 var windowScrollY = 0;
 
 generatingCanvas.addEventListener('mousedown', dragStart);
+
+//these are the settings for diabled scrolling
+var supportsPassive = false;
+try {
+    window.addEventListener("test", null, Object.defineProperty({}, 'passive', {
+      get: function () { supportsPassive = true; } 
+    }));
+  } catch(e) {}
+function preventDefault(e) {
+    e.preventDefault();
+}
+var wheelOpt = supportsPassive ? { passive: false } : false;
+var wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
+
 
 function scaleSketchWhenDragging(e){
     if (e.wheelDelta > 0 || e.key == 'w'){
@@ -401,6 +425,11 @@ function dragStart(e){
 
     generatingCanvas.classList.add('dragging');
     // container.style.cursor = 'move';
+
+    //used for disabled scrolling when dragging item
+    window.addEventListener('DOMMouseScroll', preventDefault, false); // older FF
+    window.addEventListener(wheelEvent, preventDefault, wheelOpt); // modern desktop
+
 }
 
 function dragEnd(e){
@@ -433,6 +462,10 @@ function dragEnd(e){
     document.body.removeChild(copyCanvasImg);
     generatingCanvas.classList.remove('dragging');
     // container.style.cursor = null;
+
+    //used for enabled scrolling when dragging item
+    window.removeEventListener('DOMMouseScroll', preventDefault, false);
+    window.removeEventListener(wheelEvent, preventDefault, wheelOpt); 
 }
 
 function dragMove(e){
